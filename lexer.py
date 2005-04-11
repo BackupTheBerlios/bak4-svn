@@ -17,13 +17,13 @@ tokens = (
 	'ATTRIBUTE',
 	'BIND',
 	'CALL',
-	'CLOSEFLT',
+	'CLOSESQR',
 	'COMMA',
 	'COMPARE',
 	'DBLSLASH',
-	'EL',
+	'ELEMENT',
 	'NOT',
-	'OPENFLT',
+	'OPENSQR',
 	'SLASH',
 	'STAR',
 	'UP',
@@ -49,13 +49,13 @@ def t_error(t):
 t_ATTRIBUTE	= '@[a-zA-Z][a-zA-Z0-9_]*'
 t_BIND		= r'->'
 t_CALL		= r'([a-z][a-zA-Z0-9_]*)\(\)'
-t_CLOSEFLT	= r'\]'
+t_CLOSESQR	= r'\]'
 t_COMMA		= ','
 t_COMPARE	= r'(<|<=|=|~=|>=|>)'
 t_DBLSLASH	= '//'
-t_EL		= '[a-z][a-zA-Z0-9_]*'
+t_ELEMENT	= '[a-z][a-zA-Z0-9_]*'
 t_NOT		= '~'
-t_OPENFLT	= r'\['
+t_OPENSQR	= r'\['
 t_SLASH		= '/'
 t_STAR		= r'\*'
 t_UP		= r'\.\.'
