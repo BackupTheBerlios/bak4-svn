@@ -82,4 +82,4 @@ class XPathLogScanner (GenericScanner):
 
 
 if __name__ == '__main__':
-	print XPathLogScanner().tokenize('ciao/da->Domenico > z/text()')
+	print XPathLogScanner().tokenize(raw_input())
