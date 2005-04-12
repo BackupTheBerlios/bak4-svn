@@ -4,9 +4,7 @@
 # code released under the gnu gpl, see license.txt
 
 
-import yacc
-
-from lexer import tokens
+import spark
 
 
 def p_expression_list(p):
@@ -34,11 +32,11 @@ def p_path_expression_start(p):
 	pass
 
 def p_path_expression_cnt(p):
-	'''path_expression_cnt : SLASH ELEMENT filter bind path_expression_cnt
-			| DBLSLASH ELEMENT filter bind path_expression_cnt
-			| SLASH STAR filter bind path_expression_cnt
-			| SLASH UP filter bind path_expression_cnt
-			| SLASH CALL
+	'''path_expression_cnt : path_expression_cnt SLASH ELEMENT filter bind
+			| path_expression_cnt DBLSLASH ELEMENT filter bind
+			| path_expression_cnt SLASH STAR filter bind
+			| path_expression_cnt SLASH UP filter bind'''
+	x = '''| SLASH CALL
 			| SLASH ATTRIBUTE'''
 	pass
 

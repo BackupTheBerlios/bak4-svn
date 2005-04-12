@@ -9,33 +9,10 @@ completa del linguaggio fare riferimento alla documentazione che accompagna il
 programma.
 '''
 
-import lex
+from spark import GenericScanner
 
-__all__ = ['tokenize', 'LexerException']
+from token import Token
 
-tokens = (
-	'ATTRIBUTE',
-	'BIND',
-	'CALL',
-	'CLOSESQR',
-	'COMMA',
-	'COMPARE',
-	'DBLSLASH',
-	'ELEMENT',
-	'NOT',
-	'OPENSQR',
-	'SLASH',
-	'STAR',
-	'UP',
-	'VALUE',
-	'VAR',
-)
-
-t_ignore = ' \t'
-
-def t_newline(t):
-    r'\n+'
-    t.lineno += len(t.value)
 
 class LexerException (Exception):
 	'''
@@ -43,42 +20,65 @@ class LexerException (Exception):
 	'''
 	pass
 
-def t_error(t):
-	raise LexerException, t.value
 
-t_ATTRIBUTE	= '@[a-zA-Z][a-zA-Z0-9_]*'
-t_BIND		= r'->'
-t_CALL		= r'([a-z][a-zA-Z0-9_]*)\(\)'
-t_CLOSESQR	= r'\]'
-t_COMMA		= ','
-t_COMPARE	= r'(<|<=|=|~=|>=|>)'
-t_DBLSLASH	= '//'
-t_ELEMENT	= '[a-z][a-zA-Z0-9_]*'
-t_NOT		= '~'
-t_OPENSQR	= r'\['
-t_SLASH		= '/'
-t_STAR		= r'\*'
-t_UP		= r'\.\.'
-t_VALUE		= '( "[^"]*" | [0-9]+(.[0-9]+)? )'
-t_VAR		= '[A-Z][a-zA-Z0-9_]*'
-
-
-def tokenize(source):
-	'''
-	Restituisce una lista contenente la sequenza dei token generati a partire
-	dalla stringa passata come parametro; solleva una LexerException in caso di
-	errore.
-	'''
-	lexer = lex.lex()
-	lexer.input(source)
-	rv = []
-	while 1:
-		t = lexer.token()
-		if t is None:
-			return rv
-		rv.append(t)
+class XPathLogScanner (GenericScanner):
+	
+	def __init__(self):
+		GenericScanner.__init__(self)
+	
+	def tokenize(self, input):
+		self.rv = []
+		GenericScanner.tokenize(self, input)
+		return self.rv
+	
+	def t_whitespace(self, s):
+		r' \s+ '
+		pass
+	
+	def t_compare(self, s):
+		r' ( < | <= | = | <> | >= | (?<! - ) > )'
+		self.rv.append(Token('COMPARE', s))
+	
+	def t_value(self, s):
+		r' \d+ ( \. \d+ )? '
+		## r' (\d+|"[^"]*") ' will recognize also strings -- do we need it?
+		self.rv.append(Token('VALUE', s))
+	
+	def t_element(self, s):
+		r' [a-z][a-zA-Z0-9_]* '
+		self.rv.append(Token('ELEMENT', s))
+	
+	def t_var(self, s):
+		r' [A-Z][a-zA-Z0-9_]* '
+		self.rv.append(Token('VAR', s))
+	
+	def t_attribute(self, s):
+		r' @[a-zA-Z0-9_]* '
+		self.rv.append(Token('ATTRIBUTE', s[1:]))
+	
+	def t_call(self, s):
+		r' ( pos | text ) \( \) '
+		self.rv.append(Token('CALL', s[:-2]))
+	
+	def t_arrow(self, s):
+		r' -> '
+		self.rv.append(Token('ARROW'))
+	
+	def t_slash(self, s):
+		r' / (?!/) '
+		self.rv.append(Token('SLASH'))
+	
+	def t_dslash(self, s):
+		r' // '
+		self.rv.append(Token('DSLASH'))
+	
+	def t_up(self, s):
+		r' \.\. '
+		self.rv.append(Token('UP'))
+	
+	def t_star(self, s):
+		r' \* '
+		self.rv.append(Token('STAR'))
 
 if __name__ == '__main__':
-	token_stream = tokenize("/hope/this->works")
-	for i in token_stream:
-		print i
+	print XPathLogScanner().tokenize('ciao/da->Domenico > z/text()')
