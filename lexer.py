@@ -80,5 +80,6 @@ class XPathLogScanner (GenericScanner):
 		r' \* '
 		self.rv.append(Token('STAR'))
 
+
 if __name__ == '__main__':
 	print XPathLogScanner().tokenize('ciao/da->Domenico > z/text()')
