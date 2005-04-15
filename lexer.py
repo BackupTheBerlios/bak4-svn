@@ -31,13 +31,29 @@ class XPathLogScanner (GenericScanner):
 		GenericScanner.tokenize(self, input)
 		return self.rv
 	
-	def t_whitespace(self, s):
+	def t_ignore(self, s):
 		r' \s+ '
 		pass
 	
 	def t_compare(self, s):
-		r' ( < | <= | = | <> | >= | (?<! - ) > )'
+		r' ( < (?! = ) | <= | = | \~= | >= | (?<! - ) > )'
 		self.rv.append(Token('COMPARE', s))
+	
+	def t_not(self, s):
+		r' \~ (?! = ) '
+		self.rv.append(Token('NOT'))
+	
+	def t_comma(self, s):
+		r' \, '
+		self.rv.append(Token('COMMA'))
+	
+	def t_opensqr(self, s):
+		r' \[ '
+		self.rv.append(Token('OPENSQR'))
+	
+	def t_closesqr(self, s):
+		r' \] '
+		self.rv.append(Token('CLOSESQR'))
 	
 	def t_value(self, s):
 		r' \d+ ( \. \d+ )? '
@@ -82,4 +98,13 @@ class XPathLogScanner (GenericScanner):
 
 
 if __name__ == '__main__':
-	print XPathLogScanner().tokenize(raw_input())
+	
+	try:
+		s = raw_input()
+	except EOFError:
+		s = ', 22.4 22 .. [ ] element Id @attribute text() -> > ~= ~ / //'
+		print s
+		print
+	
+	for token in XPathLogScanner().tokenize(s):
+		print token
