@@ -75,7 +75,7 @@ class XPathLogScanner (GenericScanner):
 		self.rv.append(Token('CLOSESQR', s))
 	
 	def t_numvalue(self, s):
-		r' ( \.\d+ | \d+(\.\d+)? '
+		r' ( \.\d+ | \d+(\.\d+)? ) '
 		self.rv.append(Token('NUMVALUE', s))
 	
 	def t_stringvalue(self, s):
