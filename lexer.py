@@ -4,13 +4,12 @@
 # code released under the gnu gpl, see license.txt
 
 '''
-Lexer per una versione semplificata del linguaggio XPathLog. Per la specifica
-completa del linguaggio fare riferimento alla documentazione che accompagna il
-programma.
+Lexer per una versione semplificata del linguaggio XPathLog.
+Per la specifica completa del linguaggio fare riferimento alla documentazione
+che accompagna il programma.
 '''
 
 from spark import GenericScanner
-
 from token import Token
 
 
@@ -22,6 +21,14 @@ class LexerException (Exception):
 
 
 class XPathLogScanner (GenericScanner):
+	'''
+		Questa classe implementa uno scanner per una versione ridotta del
+		linguaggio XPathLog utilizzando la libreria SPARK sviluppata da
+		John Aycock della University of Calgary.
+		
+		Per ulteriori informazioni su SPARK:
+			http://pages.cpsc.ucalgary.ca/~aycock/spark/
+	'''
 	
 	def __init__(self):
 		GenericScanner.__init__(self)
@@ -35,30 +42,45 @@ class XPathLogScanner (GenericScanner):
 		r' \s+ '
 		pass
 	
+	def t_operator(self, s):
+		r' ( \+ | \- (?! >) | \( | \) )'
+		if s == '+':
+			optype = 'PLUS'
+		if s == '-':
+			optype = 'MINUS'
+		elif s == '(':
+			optype = 'OPENPAR'
+		elif s == ')':
+			optype = 'CLOSEPAR'
+		self.rv.append(Token(optype, s))
+	
 	def t_compare(self, s):
-		r' ( < (?! = ) | <= | = | \~= | >= | (?<! - ) > )'
+		r' ( < (?! = ) | <= | = | \!= | >= | (?<! - ) > )'
 		self.rv.append(Token('COMPARE', s))
 	
 	def t_not(self, s):
-		r' \~ (?! = ) '
-		self.rv.append(Token('NOT'))
+		r' \! (?! = ) '
+		self.rv.append(Token('NOT', s))
 	
 	def t_comma(self, s):
 		r' \, '
-		self.rv.append(Token('COMMA'))
+		self.rv.append(Token('COMMA', s))
 	
 	def t_opensqr(self, s):
 		r' \[ '
-		self.rv.append(Token('OPENSQR'))
+		self.rv.append(Token('OPENSQR', s))
 	
 	def t_closesqr(self, s):
 		r' \] '
-		self.rv.append(Token('CLOSESQR'))
+		self.rv.append(Token('CLOSESQR', s))
 	
-	def t_value(self, s):
-		r' \d+ ( \. \d+ )? '
-		## r' (\d+|"[^"]*") ' will recognize also strings -- do we need it?
-		self.rv.append(Token('VALUE', s))
+	def t_numvalue(self, s):
+		r' ( \.\d+ | \d+(\.\d+)? '
+		self.rv.append(Token('NUMVALUE', s))
+	
+	def t_stringvalue(self, s):
+		' ( "[^"]*" ) '
+		self.rv.append(Token('STRINGVALUE', s))
 	
 	def t_element(self, s):
 		r' [a-z][a-zA-Z0-9_]* '
@@ -74,27 +96,27 @@ class XPathLogScanner (GenericScanner):
 	
 	def t_call(self, s):
 		r' ( pos | text ) \( \) '
-		self.rv.append(Token('CALL', s[:-2]))
+		self.rv.append(Token('CALL', s))
 	
 	def t_arrow(self, s):
 		r' -> '
-		self.rv.append(Token('ARROW'))
+		self.rv.append(Token('ARROW', s))
 	
 	def t_slash(self, s):
 		r' / (?!/) '
-		self.rv.append(Token('SLASH'))
+		self.rv.append(Token('SLASH', s))
 	
 	def t_dslash(self, s):
 		r' // '
-		self.rv.append(Token('DSLASH'))
+		self.rv.append(Token('DSLASH', s))
 	
 	def t_up(self, s):
 		r' \.\. '
-		self.rv.append(Token('UP'))
+		self.rv.append(Token('UP', s))
 	
 	def t_star(self, s):
 		r' \* '
-		self.rv.append(Token('STAR'))
+		self.rv.append(Token('STAR', s))
 
 
 if __name__ == '__main__':
@@ -102,7 +124,7 @@ if __name__ == '__main__':
 	try:
 		s = raw_input()
 	except EOFError:
-		s = ', 22.4 22 .. [ ] element Id @attribute text() -> > ~= ~ / //'
+		s = ', 22.4 22 .. [ ] element Id @attribute text() -> > != ! / //'
 		print s
 		print
 	
