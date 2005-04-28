@@ -17,3 +17,10 @@ class Token (object):
 			return 'Token(%r)' % self.type
 		else:
 			return 'Token(%r, %r)' % (self.type, self.value)
+
+
+class LexerException (Exception):
+	'''
+	Eccezione sollevata dal lexer in caso di errore.
+	'''
+	pass

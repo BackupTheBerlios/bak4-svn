@@ -31,45 +31,34 @@ def generate_graph(edges, filename, dir='~/Desktop/dots/'):
 	from os.path import expanduser
 	dotfile = open(expanduser(dir + filename), 'w')
 	print >> dotfile, 'digraph {'
-	print >> dotfile, '  node [fontname=helvetica]'
-	print >> dotfile, '  edge [fontname=helvetica]'
+	print >> dotfile, '\t', 'node [fontname=helvetica]'
+	print >> dotfile, '\t', 'edge [fontname=helvetica]'
 	for edge in edges:
 		style = ''
 		if len(edge) > 2:
-			style = '[style="dashed", label="%s"]'
-			style = style % '/'.join(edge[1:-1])
+			style = '[style=dashed]'
 		print >> dotfile, '\t', edge[0], '->', edge[-1], style
 	print >> dotfile, '}'
 
 
 class Resolver (object):
 	
-	def __init__(self, nodes, edges, generate_graphs=False):
+	def __init__(self, document, generate_graphs=False):
 		# sanity check...
-		for edge in edges:
-			assert edge[0] in nodes
-			assert edge[1] in nodes
-		self.nodes = nodes
-		self.edges = transitive_expansion(edges)
+		self.elements = document.elements
+		self.edges = transitive_expansion(document.edges)
 		if generate_graphs:
-			generate_graph(edges, 'edges.dot')
+			generate_graph(document.edges, 'edges.dot')
 			generate_graph(self.edges, 'expansion.dot')
 	
 	def resolve_bridge(self, node_a, node_b):
 		return filter(lambda x: x[0] == node_a and x[-1] == node_b,
 			self.edges)
 	
-	def resolve_up(self, node_a, node_b):
-		return map(lambda x: x[1],
-			filter(lambda x: len(x) == 3 and x[0] == node_b
-				and x[2] == node_a, self.edges))
-
-
-if __name__ == '__main__':
-
-	test_nodes = 'html head body title meta ul ol li'.split()
-	test_edges = [('html', 'head'), ('html', 'body'), ('head', 'title'),
-		('head', 'meta'), ('body', 'ul'), ('body', 'ol'), ('ul', 'li'),
-		('ol', 'li')]
+	def resolve_up(self, node_from):
+		return map(lambda x: x[0],
+			filter(lambda x: len(x) == 2 and x[1] == node_from, self.edges))
 	
-	res = Resolver(test_nodes, test_edges, generate_graphs=True)
+	def resolve_star(self, node_from):
+		return map(lambda x: x[1],
+			filter(lambda x: len(x) == 2 and x[0] == node_from, self.edges))

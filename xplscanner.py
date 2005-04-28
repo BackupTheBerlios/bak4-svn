@@ -4,20 +4,15 @@
 # code released under the gnu gpl, see license.txt
 
 '''
+xplscanner.py
+
 Lexer per una versione semplificata del linguaggio XPathLog.
 Per la specifica completa del linguaggio fare riferimento alla documentazione
 che accompagna il programma.
 '''
 
-from spark import GenericScanner
-from token import Token
-
-
-class LexerException (Exception):
-	'''
-	Eccezione sollevata dal lexer in caso di errore.
-	'''
-	pass
+from spark07 import GenericScanner
+from token import Token, LexerException
 
 
 class XPathLogScanner (GenericScanner):
@@ -117,6 +112,9 @@ class XPathLogScanner (GenericScanner):
 	def t_star(self, s):
 		r' \* '
 		self.rv.append(Token('STAR', s))
+		
+	def t_error(self):
+		print '!!!!!! >> %r' % s
 
 
 if __name__ == '__main__':

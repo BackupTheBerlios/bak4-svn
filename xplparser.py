@@ -4,13 +4,15 @@
 # code released under the gnu gpl, see license.txt
 
 '''
+xplparser.py
+
 Parser per una versione semplificata del linguaggio XPathLog.
 Per la specifica completa del linguaggio fare riferimento alla documentazione
 che accompagna il programma.
 '''
 
-from spark import GenericParser
-from lexer import XPathLogScanner
+from spark07 import GenericParser
+from xplscanner import XPathLogScanner
 from token import Token
 from walk import * 
 
