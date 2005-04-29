@@ -228,7 +228,8 @@ class XPathLogParser (GenericParser):
 
 if __name__ == '__main__':
 	
-	interactive = False
+	import sys
+	interactive = '--stdin' in sys.argv
 	
 	xps = XPathLogScanner()
 	xpp = XPathLogParser()

@@ -9,7 +9,7 @@ Per la specifica completa del linguaggio fare riferimento alla documentazione
 che accompagna il programma.
 '''
 
-from spark import GenericScanner
+from spark07 import GenericScanner
 from token import Token, LexerException
 
 
@@ -39,9 +39,9 @@ class SDDScanner (GenericScanner):
 		r' [a-z][a-zA-Z0-9_]* '
 		self.rv.append(Token('ID', s))
 	
-	def t_colon(self, s):
-		r' \: '
-		self.rv.append(Token('COLON', s))
+	def t_arrow(self, s):
+		r' -> '
+		self.rv.append(Token('ARROW', s))
 	
 	def t_openpar(self, s):
 		r' \( '
@@ -55,6 +55,10 @@ class SDDScanner (GenericScanner):
 		r' ; '
 		self.rv.append(Token('SEMICOLON', s))
 	
+	def t_comma(self, s):
+		r' , '
+		self.rv.append(Token('COMMA', s))
+	
 	def t_pcdata(self, s):
 		r' \#PCDATA '
 		self.rv.append(Token('PCDATA', s))
@@ -65,7 +69,7 @@ if __name__ == '__main__':
 	try:
 		s = raw_input()
 	except EOFError:
-		s = 'id1 id2 #PCDATA ( ) ; '
+		s = 'id1 id2 #PCDATA ( ) ; , ->'
 		print s
 		print
 	

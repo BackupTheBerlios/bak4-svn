@@ -38,6 +38,7 @@ def test_html():
 		'head': [],
 		'title': [],
 		'link': ['rel', 'href'],
+		'body': [],
 		'ul': [],
 		'ol': ['style'],
 		'li': []
