@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.4
+﻿#!/usr/bin/env python2.4
 
 # copyright (c) domenico carbotta <domenico.carbotta@gmail.com>, 2005
 # code released under the gnu gpl, see license.txt
@@ -12,7 +12,14 @@ che accompagna il programma.
 '''
 
 from spark07 import GenericScanner
-from token import Token, LexerException
+from token import Token
+
+
+class XPLScannerException (Exception):
+	'''
+		Eccezione sollevata dalla classe SDDScanner
+	'''
+	pass
 
 
 class XPathLogScanner (GenericScanner):
@@ -30,9 +37,14 @@ class XPathLogScanner (GenericScanner):
 	
 	def tokenize(self, input):
 		self.rv = []
+		self.lineno = 1
 		GenericScanner.tokenize(self, input)
 		return self.rv
-	
+		
+	def t_newline(self, s):
+		r' \n+ '
+		self.lineno += len(s)
+
 	def t_ignore(self, s):
 		r' \s+ '
 		pass
@@ -112,17 +124,19 @@ class XPathLogScanner (GenericScanner):
 	def t_star(self, s):
 		r' \* '
 		self.rv.append(Token('STAR', s))
-		
-	def t_error(self):
-		print '!!!!!! >> %r' % s
-
+	
+	def t_default(self, s):
+		r' ( . | \n )* '
+		errlen = min(len(s), 10)
+		raise XPLScannerException, 'Error at line %d: %r' % \
+				(self.lineno, s[:errlen])
 
 if __name__ == '__main__':
 	
 	try:
 		s = raw_input()
 	except EOFError:
-		s = ', 22.4 22 .. [ ] element Id @attribute text() -> > != ! / //'
+		s = ', 22.4 22 .. [ ] element Id @attribute ¬ text() -> > != ! / //'
 		print s
 		print
 	
