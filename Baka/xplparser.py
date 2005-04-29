@@ -236,7 +236,7 @@ if __name__ == '__main__':
 	if interactive:
 		s = raw_input()
 	else:
-		s = open('test.txt').read()
+		s = open('xpl_test.txt').read()
 		print s
 	
 	k = xpp.parse(xps.tokenize(s))
