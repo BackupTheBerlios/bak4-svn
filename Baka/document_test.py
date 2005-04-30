@@ -4,9 +4,9 @@
 # code released under the gnu gpl, see license.txt
 
 '''
-test.py
+document_test.py
 
-Test che coinvolgono varie classi del sistema Baka.
+Test delle funzionalità degli oggetti Document.
 '''
 
 from document import Document

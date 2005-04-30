@@ -4,8 +4,10 @@
 # code released under the gnu gpl, see license.txt
 
 '''
-Comprende le classi che costituiscono una sottospecie degenere di AST
-dell'espressione XPathLog.
+walk.py
+
+Comprende le classi che costituiscono una rappresentazione astratta
+delle espressioni XPathLog.
 '''
 
 class Walk (object):

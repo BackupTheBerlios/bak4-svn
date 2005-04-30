@@ -4,6 +4,8 @@
 # code released under the gnu gpl, see license.txt
 
 '''
+sddparser.py
+
 Parser per il linguaggio Simple Document Definition.
 Per la specifica completa del linguaggio fare riferimento alla documentazione
 che accompagna il programma.

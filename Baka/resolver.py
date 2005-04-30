@@ -4,6 +4,10 @@
 # code released under the gnu gpl, see license.txt
 
 '''
+resolver.py
+
+Classi e funzioni per la risoluzione dei passi complessi nelle espressioni
+XPathLog.
 '''
 
 class RecursiveSchemaException (Exception):

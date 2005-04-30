@@ -3,6 +3,12 @@
 # copyright (c) domenico carbotta <domenico.carbotta@gmail.com>, 2005
 # code released under the gnu gpl, see license.txt
 
+'''
+token.py
+
+Classe che rappresenta il token prodotto dagli scanner XPathLog e SDD.
+'''
+
 class Token (object):
 	
 	def __init__(self, type, value=None):
