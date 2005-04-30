@@ -81,7 +81,7 @@ class SDDParser (GenericParser):
 		if allows_pcdata:
 			self.sdd_pcdata_elements.append(id)
 		for child in children:
-			self.sdd_edges.append((id, child))
+			self.sdd_edges.insert(0, (id, child))
 	
 	def p_attribute_list(self, args):
 		'''
@@ -145,4 +145,6 @@ if __name__ == '__main__':
 		print
 	
 	k = sdp.parse(sds.tokenize(s))
-	print k
+	print k.elements
+	print k.edges
+	print k.pcdata

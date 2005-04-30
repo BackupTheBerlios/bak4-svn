@@ -31,7 +31,7 @@ def transitive_expansion(edges):
 		return transitive_expansion(edges + expansion)
 
 
-def generate_graph(edges, filename, dir='~/Desktop/dots/'):
+def generate_graph(edges, filename, dir='./'):
 	from os.path import expanduser
 	dotfile = open(expanduser(dir + filename), 'w')
 	print >> dotfile, 'digraph {'
