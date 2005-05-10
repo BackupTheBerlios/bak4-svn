@@ -4,3 +4,8 @@
 # copyright (c) domenico carbotta <domenico.carbotta@gmail.com>, 2005
 # code released under the gnu gpl, see license.txt
 
+'''
+dlgenerator.py
+
+Generatore del codice DataLog.
+'''
