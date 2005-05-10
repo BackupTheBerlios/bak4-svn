@@ -1,4 +1,5 @@
-﻿#!/usr/bin/env python2.4
+#!/usr/bin/env python2.4
+# encoding: latin-1
 
 # copyright (c) domenico carbotta <domenico.carbotta@gmail.com>, 2005
 # code released under the gnu gpl, see license.txt
@@ -20,7 +21,7 @@ def transitive_expansion(edges):
 		for edge_b in edges:
 			if edge_a[-1] == edge_b[0]:
 				new_edge = edge_a[:-1] + edge_b
-				# attenzione agli schemi con riferimenti circolari
+				# attenzione agli schemi con riferimenti circolari!
 				if new_edge[0] == new_edge[-1]:
 					raise RecursiveSchemaException, new_edge
 				if new_edge not in edges and new_edge not in expansion:
@@ -48,7 +49,6 @@ def generate_graph(edges, filename, dir='./'):
 class Resolver (object):
 	
 	def __init__(self, document, generate_graphs=False):
-		# sanity check...
 		self.elements = document.elements
 		self.edges = transitive_expansion(document.edges)
 		if generate_graphs:

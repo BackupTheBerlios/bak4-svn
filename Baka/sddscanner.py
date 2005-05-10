@@ -1,4 +1,5 @@
-﻿#!/usr/bin/env python2.4
+#!/usr/bin/env python2.4
+# encoding: latin-1
 
 # copyright (c) domenico carbotta <domenico.carbotta@gmail.com>, 2005
 # code released under the gnu gpl, see license.txt
@@ -48,6 +49,10 @@ class SDDScanner (GenericScanner):
 	
 	def t_ignore(self, s):
 		r' \s+ '
+		pass
+	
+	def t_ignore_UTF8_BOM(self, s):
+		r' \ufeff '
 		pass
 	
 	def t_id(self, s):

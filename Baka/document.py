@@ -1,4 +1,5 @@
-ï»¿#!/usr/bin/env python2.4
+#!/usr/bin/env python2.4
+# encoding: latin-1
 
 # copyright (c) domenico carbotta <domenico.carbotta@gmail.com>, 2005
 # code released under the gnu gpl, see license.txt
@@ -67,7 +68,7 @@ class Document (object):
 	def check_element(self, element):
 		'''
 		Solleva un'eccezione di tipo NoSuchElement se l'elemento passato
-		come parametro non Ã¨ presente nella descrizione della struttura.
+		come parametro non è presente nella descrizione della struttura.
 		'''
 		if element not in self.elements:
 			raise NoSuchElement(element)
@@ -92,8 +93,8 @@ class Document (object):
 	def create_empty_atom(self, element):
 		'''
 		Crea il template di un atomo Prolog che riguarda l'elemento specificato.
-		Il template generato Ã¨ una stringa che puÃ² essere formattata con l'uso
-		di un dizionario cosÃ¬ strutturato:
+		Il template generato è una stringa che può essere formattata con l'uso
+		di un dizionario così strutturato:
 		id -> identificativo del nodo
 		pos -> posizione del nodo
 		idpadre -> identificativo del nodo padre, se richiesto

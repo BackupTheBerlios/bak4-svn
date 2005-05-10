@@ -1,4 +1,5 @@
-ï»¿#!/usr/bin/env python2.4
+#!/usr/bin/env python2.4
+# encoding: latin-1
 
 # copyright (c) domenico carbotta <domenico.carbotta@gmail.com>, 2005
 # code released under the gnu gpl, see license.txt
@@ -75,7 +76,7 @@ class XPathLogParser (GenericParser):
 		# riconoscerebbe la stringa in due rami di esecuzione diversi
 		# (questo e il prossimo); in pratica, l'AP deterministico con
 		# backtracking implementato da SPARK si "accontenta" di espandere
-		# produzione. Ã¨ il comportamento che desideriamo.
+		# produzione. è il comportamento che desideriamo.
 		self.comparisons.append(Comparison(args[0].value, args[1].value,
 			args[2].value))
 		
@@ -221,8 +222,8 @@ class XPathLogParser (GenericParser):
 		# ok, queste sono produzioni "standard" che danno luogo a due tipi di
 		# operazione: espressioni aritmetiche tra numeri e variabili o, in
 		# alternativa, operazioni di concatenazione tra stringhe e variabili.
-		# la valutazione delle espressioni Ã¨ delegata all'interprete Prolog
-		# sottostante: passiamo l'espressione "cosÃ¬ come viene".
+		# la valutazione delle espressioni è delegata all'interprete Prolog
+		# sottostante: passiamo l'espressione "così come viene".
 		return Token(None, ' '.join([x.value for x in args]))
 
 
