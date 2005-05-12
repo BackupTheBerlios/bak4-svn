@@ -18,7 +18,7 @@ from token import Token
 from walk import * 
 
 
-class ParsingException (Exception):
+class XPLParsingException (Exception):
 	'''
 		Eccezione sollevata dal parser in caso di errore.
 	'''
@@ -48,7 +48,7 @@ class XPathLogParser (GenericParser):
 		'''
 		self.walks = args[0]
 		self.walks.extend(self.filters)
-		return {'walks': self.walks, 'comparisons': self.comparisons}
+		return self.walks + self.comparisons
 	
 	def p_expression_list_1(self, args):
 		'''
@@ -123,7 +123,7 @@ class XPathLogParser (GenericParser):
 		'''
 			path ::= ELEMENT spec path_cnt
 		'''
-		return args[2].insert(0, Step(args[0].value, args[1]))
+		return args[2].insert(0, SimpleStep(args[0].value, args[1]))
 	
 	def p_path_6(self, args):
 		'''
@@ -136,7 +136,7 @@ class XPathLogParser (GenericParser):
 		'''
 			path_cnt ::= SLASH ELEMENT spec path_cnt
 		'''
-		return args[3].insert(0, Step(args[1].value, args[2]))
+		return args[3].insert(0, SimpleStep(args[1].value, args[2]))
 	
 	def p_path_cnt_2(self, args):
 		'''
@@ -225,10 +225,13 @@ class XPathLogParser (GenericParser):
 		# la valutazione delle espressioni è delegata all'interprete Prolog
 		# sottostante: passiamo l'espressione "così come viene".
 		return Token(None, ' '.join([x.value for x in args]))
-
-
-if __name__ == '__main__':
 	
+	def error(self, token):
+		raise XPLParsingException, 'Error: unexpected token "%s".' \
+			% token.value
+	
+
+def main(ask_for_return=False):
 	import sys
 	interactive = '--stdin' in sys.argv
 	
@@ -242,9 +245,13 @@ if __name__ == '__main__':
 		print s
 	
 	k = xpp.parse(xps.tokenize(s))
-	for i in k['comparisons']:
+	
+	if ask_for_return:
+		return k
+	
+	for i in k:
 		print i
-	print '---'
-	for i in k['walks']:
-		print i
-		print
+
+
+if __name__ == '__main__':
+	main()	
