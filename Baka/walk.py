@@ -42,6 +42,11 @@ class Step (object):
 		return 'Step(%s, %s)' % (self.qualifier, self.id)
 
 
+class SimpleStep (Step):
+
+	def __repr__(self):
+		return 'SimpleStep(%s, %s)' % (self.qualifier, self.id)
+
 class StarStep (Step):
 	
 	def __init__(self, id):
