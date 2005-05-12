@@ -55,6 +55,10 @@ class XPathLogScanner (GenericScanner):
 		r' \s+ '
 		pass
 	
+	def t_call(self, s):
+		r' \$ ( pos | text ) '
+		self.rv.append(Token('CALL', s))
+	
 	def t_operator(self, s):
 		r' ( \+ | \- (?! >) | \( | \) )'
 		if s == '+':
@@ -96,20 +100,16 @@ class XPathLogScanner (GenericScanner):
 		self.rv.append(Token('STRINGVALUE', s))
 	
 	def t_element(self, s):
-		r' [a-z][a-zA-Z0-9_]* '
+		r' [a-z][a-zA-Z0-9_אטילעש]* '
 		self.rv.append(Token('ELEMENT', s))
 	
 	def t_var(self, s):
-		r' [A-Z][a-zA-Z0-9_]* '
+		r' [A-Z][a-zA-Z0-9_אטילעש]* '
 		self.rv.append(Token('VAR', s))
 	
 	def t_attribute(self, s):
-		r' @[a-zA-Z0-9_]* '
+		r' @[a-zA-Z0-9_אטילעש]* '
 		self.rv.append(Token('ATTRIBUTE', s[1:]))
-	
-	def t_call(self, s):
-		r' ( pos | text ) \( \) '
-		self.rv.append(Token('CALL', s))
 	
 	def t_arrow(self, s):
 		r' -> '
@@ -142,7 +142,7 @@ if __name__ == '__main__':
 	try:
 		s = raw_input()
 	except EOFError:
-		s = ', 22.4 22 .. [ ] element Id @attribute ¬ text() -> > != ! / //'
+		s = ', 22.4 22 .. [ ] element Id @attribute $text -> > != ! / //'
 		print s
 		print
 	

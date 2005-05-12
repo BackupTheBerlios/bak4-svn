@@ -56,7 +56,7 @@ class SDDScanner (GenericScanner):
 		pass
 	
 	def t_id(self, s):
-		r' [a-z][a-zA-Z0-9_]* '
+		r' [a-z][a-zA-Z0-9_אטילעש]* '
 		self.rv.append(Token('ID', s))
 	
 	def t_arrow(self, s):
@@ -95,7 +95,7 @@ if __name__ == '__main__':
 		s = raw_input()
 	except EOFError:
 		s = '''id1 id2 #PCDATA ( ) ; , ->
-		abc Abcdef'''
+		abc abcdef'''
 		print s
 		print
 	
