@@ -12,6 +12,7 @@ Test delle funzionalità degli oggetti Document.
 
 from document import Document
 
+
 def test_corsi():
 
 	elements = {
@@ -24,12 +25,7 @@ def test_corsi():
 	pcdata = ['titolo', 'docente']
 
 	doc = Document(elements, edges, pcdata)
-	
-	params = {'id': 'Id', 'pos': 'Pos'}
-	x = None
-	for element in elements:
-		atom, x = doc.create_atom(element, params, start_at=x)
-		print atom
+	print_results(doc)	
 
 
 def test_html():
@@ -51,5 +47,23 @@ def test_html():
 	
 	doc = Document(elements, edges, pcdata)
 	
+	print_results(doc)	
+
+
+def print_results(doc):
+	params = {'$id': 'Id', '$pos': 'Pos'}
+	x = 1
 	for element in doc.elements:
-		print doc.create_empty_atom(element)
+		print doc.create_atom(element, params)
+
+
+def main():
+	test_corsi()
+	print
+	print '---'
+	print
+	test_html()
+
+
+if __name__ == '__main__':
+	main()
