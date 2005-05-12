@@ -127,6 +127,10 @@ class SDDParser (GenericParser):
 			allows_pcdata ::=
 		'''
 		return False
+	
+	def error(self, token):
+		raise SDDParsingException, 'Error: unexpected token "%s".' \
+			% token.value
 
 
 if __name__ == '__main__':
