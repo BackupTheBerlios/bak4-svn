@@ -55,7 +55,7 @@ class XPathLogParser (GenericParser):
 				last_step = step.id
 			rv.extend(steps)
 		return rv
-
+		
 	def p_denial(self, args):
 		'''
 			denial ::= expression_list
@@ -76,7 +76,6 @@ class XPathLogParser (GenericParser):
 		'''
 			expression_list ::= expression
 		'''
-		# Conflitto shift-reduce ok.
 		if args[0] is None:
 			return []
 		else:
