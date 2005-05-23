@@ -7,7 +7,7 @@
 '''
 token.py
 
-Classe che rappresenta il token prodotto dagli scanner XPathLog e SDD.
+Classe che rappresenta un token prodotto dagli scanner XPathLog e SDD.
 '''
 
 class Token (object):

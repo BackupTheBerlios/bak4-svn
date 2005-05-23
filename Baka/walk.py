@@ -25,7 +25,7 @@ class Walk (object):
 		s = ""
 		s += 'Walk'
 		if self.refers_to is not None:
-			s += ' (starting from %s)' % (self.refers_to)
+			s += ' (starting from %s)' % self.refers_to
 		s += ':\n'
 		for i in self.steps:
 			s += '\t' + repr(i) + '\n'
@@ -34,54 +34,102 @@ class Walk (object):
 
 class Step (object):
 
-	def __init__(self, qualifier, id):
+	def __init__(self, qualifier, id, start=None):
 		self.qualifier = qualifier
 		self.id = id
+		self.start = start
 	
-	def __repr__(self):
-		return 'Step(%s, %s)' % (self.qualifier, self.id)
+	def render(self):
+		raise NotImplementedException
 
 
 class SimpleStep (Step):
-
+	
+	def __init__(self, qualifier, id, start=None):
+		Step.__init__(self, qualifier, id, start)
+	
 	def __repr__(self):
-		return 'SimpleStep(%s, %s)' % (self.qualifier, self.id)
+		return 'SimpleStep(%r, %r, %r)' % (self.qualifier, self.id, self.start)
+	
+	def render(self):
+		return self.start + '/' + self.qualifier + '->' + self.id 
+
 
 class StarStep (Step):
 	
-	def __init__(self, id):
-		Step.__init__(self, '*', id)
+	def __init__(self, id, start=None):
+		Step.__init__(self, '*', id, start)
 
 	def __repr__(self):
-		return 'StarStep(%s)' % (self.id)
+		return 'StarStep(%r, %r)' % (self.id, self.start)
+
+	def render(self):
+		return self.start + '/*->' + self.id 
 
 
 class BridgeStep (Step):
 	
-	def __init__(self, qualifier, id):
-		Step.__init__(self, qualifier, id)
+	def __init__(self, qualifier, id, start=None):
+		Step.__init__(self, qualifier, id, start)
 
 	def __repr__(self):
-		return 'BridgeStep(%s, %s)' % (self.qualifier, self.id)
+		return 'BridgeStep(%r, %r, %r)' % (self.qualifier, self.id, self.start)
+
+	def render(self):
+		if self.start is None:
+			return '//' + self.qualifier + '->' + self.id
+		else:
+			return self.start + '//' + self.qualifier + '->' + self.id 
 
 
 class UpStep (Step):
 	
-	def __init__(self, id):
-		Step.__init__(self, '..', id)
+	def __init__(self, id, start=None):
+		Step.__init__(self, '..', id, start)
 
 	def __repr__(self):
-		return 'UpStep(%s)' % (self.id)
+		return 'UpStep(%r, %r)' % (self.id, self.start)
+	
+	def render(self):
+		return self.start + '/..->' + self.id 
 
 
 class AttribStep (Step):
 	
-	def __init__(self, qualifier, id):
-		Step.__init__(self, qualifier, id)
+	def __init__(self, qualifier, id, start=None):
+		Step.__init__(self, qualifier, id, start)
 
 	def __repr__(self):
-		return 'AttribStep(%s, %s)' % (self.qualifier, self.id)
+		return 'AttribStep(%r, %r, %r)' % (self.qualifier, self.id, self.start)
 
+	def render(self):
+		if self.qualifier.startswith('$'):
+			return self.start + '/' + self.qualifier[1:] + '()->' + self.id
+		else:
+			return self.start + '/@' + self.qualifier + '->' + self.id 
+
+
+
+class BridgeAttribStep (Step):
+	
+	def __init__(self, qualifier, id, start=None):
+		Step.__init__(self, qualifier, id, start)
+
+	def __repr__(self):
+		return 'BridgeAttribStep(%r, %r, %r)' % \
+				(self.qualifier, self.id, self.start)
+	
+	def render(self):
+		if self.start is None:
+			if self.qualifier.startswith('$'):
+				return '//@' + self.qualifier + '->' + self.id 
+			else:
+				return '//' + self.qualifier[1:] + '()->' + self.id
+		else:
+			if self.qualifier.startswith('$'):
+				return self.start + '//@' + self.qualifier + '->' + self.id 
+			else:
+				return self.start + '//' + self.qualifier[1:] + '()->' + self.id
 
 class Comparison (object):
 	
@@ -91,4 +139,7 @@ class Comparison (object):
 		self.rhs = rhs
 	
 	def __repr__(self):
-		return 'Comparison(%s, %s, %s)' % (self.lhs, self.op, self.rhs)
+		return "Comparison('%s', '%s', '%s')" % (self.lhs, self.op, self.rhs)
+	
+	def render(self):
+		return self.lhs + ' ' + self.op + ' ' + self.rhs

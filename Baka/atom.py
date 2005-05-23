@@ -60,7 +60,12 @@ class Atom (object):
 				n += 1
 		return self.template % quote_prolog_vars(params), n
 	
+	def render_empty(self):
+		params = self.required_parameters
+		# creo un dizionario che contiene come chiavi i parametri dell'atomo
+		# e come valori caratteri underscore.
+		underscores = dict(zip(params, ['_'] * len(params)))
+		return self.template % underscores
+	
 	def __str__(self):
-		l = self.required_parameters
-		d = dict(zip(l, ['_'] * len(l))) 
-		return self.template % d
+		return self.render_empty()

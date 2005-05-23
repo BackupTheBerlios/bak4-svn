@@ -42,13 +42,27 @@ class XPathLogParser (GenericParser):
 		self.walks = []
 		self.generated_var_count = 0
 	
+	def postprocess(self, walks):
+		rv = []
+		for item in walks:
+			if not isinstance(item, Walk):
+				rv.append(item)
+				continue
+			steps = item.steps[:]
+			last_step = item.refers_to
+			for step in steps:
+				step.start = last_step
+				last_step = step.id
+			rv.extend(steps)
+		return rv
+
 	def p_denial(self, args):
 		'''
 			denial ::= expression_list
 		'''
 		self.walks = args[0]
 		self.walks.extend(self.filters)
-		return self.walks + self.comparisons
+		return self.postprocess(self.walks + self.comparisons)
 	
 	def p_expression_list_1(self, args):
 		'''
@@ -132,6 +146,12 @@ class XPathLogParser (GenericParser):
 		'''
 		return Walk().insert(0, AttribStep(args[0].value, args[1]))
 	
+	def p_path_7(self, args):
+		'''
+			path ::= DSLASH ATTRIBUTE bind
+		'''
+		return Walk().insert(0, BridgeAttribStep(args[1].value, args[2]))
+	
 	def p_path_cnt_1(self, args):
 		'''
 			path_cnt ::= SLASH ELEMENT spec path_cnt
@@ -164,6 +184,12 @@ class XPathLogParser (GenericParser):
 		return Walk().insert(0, AttribStep(args[1].value, args[2]))
 	
 	def p_path_cnt_6(self, args):
+		'''
+			path_cnt ::= DSLASH ATTRIBUTE bind
+		'''
+		return Walk().insert(0, BridgeAttribStep(args[1].value, args[2]))		
+
+	def p_path_cnt_7(self, args):
 		'''
 			path_cnt ::=
 		'''
@@ -219,11 +245,11 @@ class XPathLogParser (GenericParser):
 			math_operand ::= VAR
 			math_operand ::= OPENPAR math_expr CLOSEPAR
 		'''
-		# ok, queste sono produzioni "standard" che danno luogo a due tipi di
+		# queste sono produzioni "standard" che danno luogo a due tipi di
 		# operazione: espressioni aritmetiche tra numeri e variabili o, in
 		# alternativa, operazioni di concatenazione tra stringhe e variabili.
-		# la valutazione delle espressioni è delegata all'interprete Prolog
-		# sottostante: passiamo l'espressione "così come viene".
+		# la valutazione delle espressioni è lasciata come esercizio
+		# all'interprete XQuery.
 		return Token(None, ' '.join([x.value for x in args]))
 	
 	def error(self, token):
@@ -250,7 +276,7 @@ def main(ask_for_return=False):
 		return k
 	
 	for i in k:
-		print i
+		print i.render()
 
 
 if __name__ == '__main__':

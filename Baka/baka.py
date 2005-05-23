@@ -10,7 +10,6 @@ baka.py
 
 import sddscanner, sddparser
 import xplscanner, xplparser
-import dlgenerator
 import sys
 
 
@@ -51,24 +50,20 @@ def main(argv=None):
 	
 	document = sdd_parser.parse(sdd_scanner.tokenize(document_descr))
 	
-	# Creo una lista di cammini (Walk) e comparazioni (Comparison) a partire
-	# dal testo del denial XPathLog
+	# Creo una rappresentazione semplificata dell'espressione XPathLog.
 	
 	xpl_scanner = xplscanner.XPathLogScanner()
 	xpl_parser = xplparser.XPathLogParser()
 	
-	denial = xpl_parser.parse(xpl_scanner.tokenize(denial_text))
+	steps = xpl_parser.parse(xpl_scanner.tokenize(denial_text))
 	
-	print denial
+	for step in steps:
+		print step.render()
 	
-	# Creo un generatore DataLog (DLGenerator) a partire dal documento.
+	return document, steps
 	
-	'''dlgen = dlgenerator.DLGenerator(document)
 
-	for clause in denial:
-		print clause
-		print dlgen.translate(clause, {})
-	'''
 if __name__ == '__main__':
+	
 	main(['', 'integration test/azienda.sdd',
 			'integration test/check_stipendio.xpl'])
