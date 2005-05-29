@@ -66,7 +66,7 @@ class Document (object):
 		come primo parametro non possiede l'attributo indicato come secondo
 		parametro.
 		'''
-		if attribute not in self.elements[element][0]:
+		if attribute not in self.elements[element]:
 			raise NoSuchAttribute(element + '.' + attribute)
 	
 	def has_parent(self, element):

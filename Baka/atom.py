@@ -51,7 +51,7 @@ class Atom (object):
 		args = ', '.join(['%%(%s)s' % x for x in self.required_parameters])
 		self.template = element + '(' + args + ')'
 		
-	def render(self, format='Var%02d', start_at=1):
+	def render(self, format='EscVar%d', start_at=1):
 		n = start_at
 		params = self.parameters.copy()
 		for p in self.required_parameters:
@@ -60,12 +60,26 @@ class Atom (object):
 				n += 1
 		return self.template % quote_prolog_vars(params), n
 	
-	def render_empty(self):
+	def compatible_with(self, other):
+		return (isinstance(other, Atom) and
+				self.document is other.document and
+				self.element == other.element and
+					('$id' not in self.parameters or
+					'$id' not in other.parameters or
+					self.parameters['$id'] == other.parameters['$id']))
+	
+	def join(self, other):
+		nd = self.parameters.copy()
+		nd.update(other.parameters)
+		return Atom(self.document, self.element, nd)
+
+	def render_unescaped(self):
 		params = self.required_parameters
 		# creo un dizionario che contiene come chiavi i parametri dell'atomo
 		# e come valori caratteri underscore.
-		underscores = dict(zip(params, ['_'] * len(params)))
-		return self.template % underscores
+		unescaped = dict.fromkeys(params, '_')
+		unescaped .update(self.parameters)
+		return self.template % unescaped
 	
 	def __str__(self):
-		return self.render_empty()
+		return self.render_unescaped()

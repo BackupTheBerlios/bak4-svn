@@ -10,6 +10,8 @@ baka.py
 
 import sddscanner, sddparser
 import xplscanner, xplparser
+import preprocessor
+import dlgenerator
 import sys
 
 
@@ -57,13 +59,21 @@ def main(argv=None):
 	
 	steps = xpl_parser.parse(xpl_scanner.tokenize(denial_text))
 	
-	for step in steps:
-		print step.render()
+	pp = preprocessor.Preprocessor(document)
+	dlgen = dlgenerator.DatalogGenerator(document)
 	
-	return document, steps
+	_debug = False
 	
-
+	if not _debug:
+		linearizations = pp.process(steps)
+		for x in linearizations:
+			print x.render()
+		for x in dlgen.translate(linearizations):
+			print '<~\t' + x
+	else:
+		return document, steps
+	
 if __name__ == '__main__':
 	
-	main(['', 'integration test/azienda.sdd',
+	main([None, 'integration test/azienda.sdd',
 			'integration test/check_stipendio.xpl'])

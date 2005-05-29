@@ -55,14 +55,22 @@ class Resolver (object):
 			generate_graph(document.edges, 'edges.dot')
 			generate_graph(self.edges, 'expansion.dot')
 	
-	def resolve_bridge(self, node_a, node_b):
-		return filter(lambda x: x[0] == node_a and x[-1] == node_b,
-			self.edges)
+	def resolve_bridge(self, node_from, node_to):
+		return [edge for edge in self.edges
+				if edge[0] == node_from and edge[-1] == node_to]
 	
 	def resolve_up(self, node_from):
-		return map(lambda x: x[0],
-			filter(lambda x: len(x) == 2 and x[1] == node_from, self.edges))
+		return [edge[0] for edge in self.edges
+				if len(edge) == 2 and edge[1] == node_from]
 	
 	def resolve_star(self, node_from):
-		return map(lambda x: x[1],
-			filter(lambda x: len(x) == 2 and x[0] == node_from, self.edges))
+		return [edge[1] for edge in self.edges
+				if len(edge) == 2 and edge[0] == node_from]
+	
+	def resolve_bridge_attrib(self, node_from, attrib_to):
+		goals = [element for element in self.elements
+				if attrib_to in self.elements[element]]		
+		rv = []
+		for target in goals:
+			rv.extend(self.resolve_bridge(node_from, target))
+		return rv
