@@ -142,4 +142,4 @@ class Comparison (object):
 		return "Comparison('%s', '%s', '%s')" % (self.lhs, self.op, self.rhs)
 	
 	def render(self):
-		return self.lhs + ' ' + self.op + ' ' + self.rhs
+		return "Comparison('%s', '%s', '%s')" % (self.lhs, self.op, self.rhs)
