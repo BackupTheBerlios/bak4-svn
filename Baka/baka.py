@@ -62,16 +62,12 @@ def main(argv=None):
 	pp = preprocessor.Preprocessor(document)
 	dlgen = dlgenerator.DatalogGenerator(document)
 	
-	_debug = False
-	
-	if not _debug:
-		linearizations = pp.process(steps)
-		for x in linearizations:
-			print x.render()
-		for x in dlgen.translate(linearizations):
-			print '<~\t' + x
-	else:
-		return document, steps
+	linearizations = pp.process(steps)
+	for x in linearizations:
+		print x.render()
+	for x in dlgen.translate(linearizations):
+		print '<~\t' + x
+
 	
 if __name__ == '__main__':
 	

@@ -131,6 +131,7 @@ class BridgeAttribStep (Step):
 			else:
 				return self.start + '//' + self.qualifier[1:] + '()->' + self.id
 
+
 class Comparison (object):
 	
 	def __init__(self, lhs, op, rhs):
@@ -139,7 +140,7 @@ class Comparison (object):
 		self.rhs = rhs
 	
 	def __repr__(self):
-		return "Comparison('%s', '%s', '%s')" % (self.lhs, self.op, self.rhs)
+		return self.render()
 	
 	def render(self):
-		return "Comparison('%s', '%s', '%s')" % (self.lhs, self.op, self.rhs)
+		return "'%s'('%s', '%s')" % (self.op, self.lhs, self.rhs)

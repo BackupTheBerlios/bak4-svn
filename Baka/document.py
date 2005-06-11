@@ -52,23 +52,31 @@ class Document (object):
 		self.pcdata = pcdata
 		self.resolver = resolver.Resolver(self, generate_graphs=True)
 	
-	def check_element(self, element):
+	def check_element(self, element, throw=True):
 		'''
 		Solleva un'eccezione di tipo NoSuchElement se l'elemento passato
 		come parametro non è presente nella descrizione della struttura.
 		'''
 		if element not in self.elements:
-			raise NoSuchElement(element)
-	
-	def check_attribute(self, element, attribute):
+			if throw:
+				raise NoSuchElement(element)
+			else:
+				return False
+		return True
+		
+	def check_attribute(self, element, attribute, throw=True):
 		'''
 		Solleva un'eccezione di tipo NoSuchException se l'elemento specificato
 		come primo parametro non possiede l'attributo indicato come secondo
 		parametro.
 		'''
 		if attribute not in self.elements[element]:
-			raise NoSuchAttribute(element + '.' + attribute)
-	
+			if throw:
+				raise NoSuchAttribute(element + '.' + attribute)
+			else:
+				return False
+		return True
+		
 	def has_parent(self, element):
 		'''
 		Restituisce un valore booleano che indica se il nodo selezionato ha un
@@ -84,11 +92,3 @@ class Document (object):
 		'''
 		self.check_element(element)
 		return Atom(self, element, parameters)
-
-
-if __name__ == '__main__':
-	
-	import document_test
-	
-	## document_test.test_corsi()
-	document_test.test_html()

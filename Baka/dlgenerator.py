@@ -39,11 +39,10 @@ class DatalogGenerator (object):
 				rv.append(self.document.create_atom(step.qualifier,
 						{'$id': step.id}))
 			
-			elif isinstance(step, Comparison):
+			elif isinstance(step, MathAtom):
 				rv.append(step)
 		
 		return rv
-	
 	
 	def translate(self, states, start_at=0):
 		datalog_expr = []
@@ -51,33 +50,49 @@ class DatalogGenerator (object):
 		for state in states:
 			rendered_atoms = []
 			atoms = self.generate(state.steps, state.context)
-			atoms = simplify(atoms)
+			atoms = simplify_linear(atoms)
 			for atom in atoms:
-				if isinstance(atom, Comparison):
+				print atom, type(atom)
+				if isinstance(atom, MathAtom):
 					rendered_atoms.append(atom.render())
 					continue
 				res, start_at = atom.render(start_at=start_at)
 				rendered_atoms.append(res)
 			datalog_expr.append(',\n'.join(rendered_atoms))
-		return datalog_expr
+		return datalog_expr	
 
 
-def simplify(datalog_expr):
-	rv = []
+def simplify_linear(datalog_expr):
+	# XXX
+	comparisons = []
+	hashes = {}
 	
-	for atom_a in datalog_expr:
-		if isinstance(atom_a, Comparison):
-			rv.append(atom_a)
+	for atom in datalog_expr:
+		if isinstance(atom, MathAtom):
+			comparisons.append(atom)
 			continue
-		joined = False
-		for atom_b in rv:
-			if atom_a.compatible_with(atom_b):
-				rv.remove(atom_b)
-				rv.append(atom_a.join(atom_b))
-				joined = True
-				print '%s %s OK' % (atom_a, atom_b)
-			else:
-				print '%s %s NO' % (atom_a, atom_b)
-		if not joined:
-			rv.append(atom_a)
-	return rv
+		atom_hash = atom.element, atom.parameters.get('$id', None)
+		if atom_hash in hashes:
+			hashes[atom_hash], rest = hashes[atom_hash].join(atom)
+			comparisons.extend(rest)
+		else:
+			hashes[atom_hash] = atom
+	
+	return hashes.values() + comparisons
+
+'''
+import testhelper
+
+doc = testhelper.sdd_azienda
+
+atom_a = doc.create_atom('dipendente', {'$id': 'Id', 'grado': 'X',
+	'nome': '"Pippo"'})
+atom_b = doc.create_atom('dipendente', {'$id': 'Id', 'grado': 'Y',
+	'cognome': '"Pluto"'})
+
+for i in simplify([atom_a, atom_b]):
+	print i
+print '---'
+for i in simplify_linear([atom_a, atom_b]):
+	print i
+'''
