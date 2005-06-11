@@ -14,7 +14,7 @@ che accompagna il programma.
 
 from spark07 import GenericParser
 from sddscanner import SDDScanner
-from token import Token
+from mytoken import Token
 from document import Document
 
 class SDDParsingException (Exception):
@@ -68,21 +68,18 @@ class SDDParser (GenericParser):
 	
 	def p_element(self, args):
 		'''
-			element ::= ID ARROW attribute_list idlist allows_pcdata
+			element ::= ID ARROW attribute_list contents
 		'''
 		id = args[0].value
 		attributes = args[2]
-		children = args[3]
-		allows_pcdata = args[4]
+		allows_pcdata, children = args[3]
 		
-		if allows_pcdata and len(children) != 0:
-			raise SDDParsingException, \
-				"I'm not supposed to deal with mixed elements!"
 		self.sdd_elements[id] = attributes
 		if allows_pcdata:
 			self.sdd_pcdata_elements.append(id)
-		for child in children:
-			self.sdd_edges.insert(0, (id, child))
+		else:
+			for child in children:
+				self.sdd_edges.insert(0, (id, child))
 	
 	def p_attribute_list(self, args):
 		'''
@@ -93,6 +90,18 @@ class SDDParser (GenericParser):
 			return []
 		else:
 			return args[1]
+	
+	def p_contents_1(self, args):
+		'''
+			contents ::= idlist
+		'''
+		return False, args[0]
+	
+	def p_contents_2(self, args):
+		'''
+			contents ::= PCDATA
+		'''
+		return True, None
 	
 	def p_idlist(self, args):
 		'''
@@ -114,42 +123,7 @@ class SDDParser (GenericParser):
 		else:
 			args[2].insert(0, args[0].value)
 			return args[2]
-	
-	def p_allows_pcdata(self, args):
-		'''
-			allows_pcdata ::= PCDATA
-			allows_pcdata ::= COMMA PCDATA
-		'''
-		return True
-	
-	def p_allows_pcdata_2(self, args):
-		'''
-			allows_pcdata ::=
-		'''
-		return False
-	
+		
 	def error(self, token):
 		raise SDDParsingException, 'Error: unexpected token "%s".' \
 			% token.value
-
-
-if __name__ == '__main__':
-	
-	import sys
-	interactive = '--stdin' in sys.argv
-	
-	sds = SDDScanner()
-	sdp = SDDParser()
-	
-	if interactive:
-		s = raw_input()
-	else:
-		s = open('sdd_test.txt').read()
-		print s
-		print '---'
-		print
-	
-	k = sdp.parse(sds.tokenize(s))
-	print k.elements
-	print k.edges
-	print k.pcdata

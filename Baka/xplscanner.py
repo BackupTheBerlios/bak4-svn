@@ -14,7 +14,7 @@ che accompagna il programma.
 
 from spark07 import GenericScanner
 from re import UNICODE
-from token import Token
+from mytoken import Token
 
 
 class XPLScannerException (Exception):

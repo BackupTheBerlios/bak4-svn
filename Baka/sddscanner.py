@@ -13,7 +13,7 @@ che accompagna il programma.
 '''
 
 from spark07 import GenericScanner
-from token import Token
+from mytoken import Token
 
 
 class SDDScannerException (Exception):
@@ -88,17 +88,3 @@ class SDDScanner (GenericScanner):
 		errlen = min(len(s), 10)
 		raise SDDScannerException, 'Error at line %d: %r' % \
 				(self.lineno, s[:errlen])
-
-if __name__ == '__main__':
-	
-	try:
-		s = raw_input()
-	except EOFError:
-		s = '''id1 id2 #PCDATA ( ) ; , ->
-		abc abcdef'''
-		print s
-		print
-	
-	for token in SDDScanner().tokenize(s):
-		print token
-
