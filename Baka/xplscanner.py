@@ -55,8 +55,13 @@ class XPathLogScanner (GenericScanner):
 		r' \s+ '
 		pass
 	
-	def t_call(self, s):
-		r' \$ ( pos | text ) '
+	def t_aaa_call(self, s):
+		r' (pos|text) \s* \( \s* \) '
+		# la sequenza "aaa" fa' sל che SPARK effettui il matching contro
+		# questa regex prima che contro tutte le altre: secondo la
+		# documentazione, GenericScanner segue l'ordine alfabetico.pos()
+		# potrebbe essere infatti interpretato come ELEMENT(pos), OPENPAR,
+		# CLOSEPAR.
 		self.rv.append(Token('CALL', s))
 	
 	def t_operator(self, s):
@@ -100,11 +105,15 @@ class XPathLogScanner (GenericScanner):
 		self.rv.append(Token('STRINGVALUE', s))
 	
 	def t_element(self, s):
-		r' [a-z][a-zA-Z0-9_אטילעש]* '
+		r' [a-zA-Z0-9_אטילעש]+ '
 		self.rv.append(Token('ELEMENT', s))
 	
 	def t_var(self, s):
-		r' [A-Z][a-zA-Z0-9_אטילעש]* '
+		r' \$[A-Z][a-zA-Z0-9_אטילעש]* '
+		self.rv.append(Token('VAR', s[1:]))
+	
+	def t_metaconst(self, s):
+		r' \?[a-zA-Z][a-zA-Z0-9_אטילעש]* '
 		self.rv.append(Token('VAR', s))
 	
 	def t_attribute(self, s):
@@ -142,7 +151,7 @@ if __name__ == '__main__':
 	try:
 		s = raw_input()
 	except EOFError:
-		s = ', 22.4 22 .. [ ] element Id @attribute $text -> > != ! / //'
+		s = '?a $Abc pos()'
 		print s
 		print
 	

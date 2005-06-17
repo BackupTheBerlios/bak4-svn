@@ -87,9 +87,9 @@ class XPathLogParser (GenericParser):
 		'''
 		# in teoria, l'AP non-deterministico corrispondente a questa grammatica
 		# riconoscerebbe la stringa in due rami di esecuzione diversi
-		# (questo e il prossimo); in pratica, l'AP deterministico con
-		# backtracking implementato da SPARK si "accontenta" di espandere
-		# produzione. è il comportamento che desideriamo.
+		# (questo e il prossimo);  l'AP deterministico implementato
+		# da SPARK si "accontenta" di espandere questa produzione.
+		# è il comportamento che desideriamo.
 		self.comparisons.append(Comparison(args[0].value, args[1].value,
 			args[2].value))
 		
@@ -124,13 +124,13 @@ class XPathLogParser (GenericParser):
 		'''
 			path ::= UP spec path_cnt
 		'''
-		return args[2].insert(0, UpStep(args[2]))
+		return args[2].insert(0, UpStep(args[1]))
 
 	def p_path_4(self, args):
 		'''
 			path ::= STAR spec path_cnt
 		'''
-		return args[2].insert(0, StarStep(args[2]))
+		return args[2].insert(0, StarStep(args[1]))
 	
 	def p_path_5(self, args):
 		'''
@@ -185,6 +185,7 @@ class XPathLogParser (GenericParser):
 	def p_path_cnt_6(self, args):
 		'''
 			path_cnt ::= DSLASH ATTRIBUTE bind
+			path_cnt ::= DSLASH CALL bind
 		'''
 		return Walk().insert(0, BridgeAttribStep(args[1].value, args[2]))		
 
@@ -266,7 +267,7 @@ def main(ask_for_return=False):
 	if interactive:
 		s = raw_input()
 	else:
-		s = open('xpl_test.txt').read()
+		s = open('integration test/check_alfabetico.xpl').read()
 		print s
 	
 	k = xpp.parse(xps.tokenize(s))
@@ -275,7 +276,7 @@ def main(ask_for_return=False):
 		return k
 	
 	for i in k:
-		print i.render()
+		print i
 
 
 if __name__ == '__main__':
