@@ -72,4 +72,4 @@ def main(argv=None):
 if __name__ == '__main__':
 	
 	main([None, 'integration test/azienda.sdd',
-			'integration test/check_stipendio.xpl'])
+			'integration test/check_alfabetico.xpl'])
