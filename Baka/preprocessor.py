@@ -118,8 +118,9 @@ class Preprocessor (object):
 				states = rv
 				
 			elif isinstance(step, Comparison):
+				atom = MathAtom(step.op, step.lhs, step.rhs)
 				for state in states:
-					state.add([step], {})
+					state.add([atom], {})
 			
 			else:
 				raise Exception, step
