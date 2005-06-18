@@ -1,0 +1,8 @@
+html -> (lang) head, body;
+head  -> link, title;
+title -> #PCDATA;
+link -> (rel, href);
+body -> ul, ol;
+ul -> li;
+ol -> (style) li;
+li -> #PCDATA;

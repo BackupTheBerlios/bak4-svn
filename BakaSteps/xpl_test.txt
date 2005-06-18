@@ -1,0 +1,3 @@
+//dipendente[@qualifica = "dirigente"]->D/stipendio/$text->DW,
+D/../dipendente[@qualifica != "dirigente"]->E/stipendio/$text->EW,
+EW >= DW
