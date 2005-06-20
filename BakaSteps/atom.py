@@ -11,22 +11,23 @@ Rappresentazione astratta di un atomo Prolog generato a partire da un
 elemento XML.
 '''
 
-def quote_prolog_vars(x):
+def quote_prolog_vars(container):
 	'''
 	Restituisce una copia del dizionario o della lista passato/a come parametro
 	nella quale i valori che rappresentano variabili Datalog o parametri (ossia
 	tutti quelli che iniziano con la maiuscola o con un punto interrogativo)
 	sono virgolettati, come richiesto dai programmi a valle. 
 	'''
-	if type(x) is dict:
-		d = x.copy()    # non tocchiamo il dizionario originale!
+	if type(container) is dict:
+		# non tocchiamo il dizionario originale!
+		d = container.copy()
 		for k, i in d.iteritems():
 			if i[0].isupper():
 				d[k] = "'%s'" % i
 		return d
-	elif type(x) is list:
+	elif type(container) is list:
 		rv = []
-		for i in x:
+		for i in container:
 			if i[0].isupper():
 				rv.append("'%s'" % i)
 			else:
@@ -53,10 +54,7 @@ class Atom (object):
 			self.required_parameters.append('$parent')
 		
 		self.required_parameters.extend(self.document.elements[self.element])
-		
-		#if self.element in self.document.pcdata:
-		#	self.required_parameters.append('$text')
-		
+				
 		args = ', '.join(['%%(%s)s' % x for x in self.required_parameters])
 		self.template = element + '(' + args + ')'
 	

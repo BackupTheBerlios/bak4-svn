@@ -9,7 +9,7 @@ preproccessor.py
 
 Risolve i cammini complessi (contenenti StarStep, UpStep, BridgeStep e
 BridgeAttribStep) trasformandoli in cammini semplici, contenenti solo
-SimpleStep ed AttribStep.
+LinearStep ed AttribStep.
 '''
 
 from walk import *
@@ -50,12 +50,11 @@ class State (object):
 	
 	
 	def __repr__(self):
-		#return '<%r, %r>' % (self.steps, self.context)
 		return self.render()
 	
 	
 	def render(self):
-		rv = 'state:\n'# % self.preprocessor.states.index(self)
+		rv = 'state:\n'
 		rv += '\tsteps:\n'
 		for step in self.steps:
 			rv += '\t\t' + step.render() + '\n'
@@ -89,7 +88,7 @@ class Preprocessor (object):
 		
 		for step in steps:
 	
-			if isinstance(step, (SimpleStep, BridgeStep)):
+			if isinstance(step, (LinearStep, BridgeStep)):
 				for state in states:
 					state.add([step], {step.id: step.qualifier})
 			
@@ -102,7 +101,7 @@ class Preprocessor (object):
 				for state in states:
 					start_el = state.context[step.start]
 					for type in resolver.resolve_star(start_el):
-						branch = [SimpleStep(type, step.id, step.start)]
+						branch = [LinearStep(step.start, type, step.id)]
 						rv.append(state.fork(branch, {step.id: type}))
 				states = rv
 			
@@ -111,16 +110,18 @@ class Preprocessor (object):
 				for state in states:
 					start_el = state.context[step.start]
 					for alternative in resolver.resolve_up(start_el):
-						branch = [
-							SimpleStep(state.context[step.start], step.start,
-									step.id)]
+						# attenzione: $A/..->$B va tradotto come
+						# tipo_a($A, _, $B, ...)
+						# cioè con un LinearStep che parta da step.id
+						# e arrivi a step.start (totale asimmetria).
+						branch = [LinearStep(step.id, state.context[step.start],
+								step.start)]
 						rv.append(state.fork(branch, {step.id: alternative}))
 				states = rv
 				
-			elif isinstance(step, Comparison):
-				atom = MathAtom(step.op, step.lhs, step.rhs)
+			elif isinstance(step, MathAtom):
 				for state in states:
-					state.add([atom], {})
+					state.add([step], {})
 			
 			else:
 				raise Exception, step
@@ -143,7 +144,7 @@ class Preprocessor (object):
 			
 			for step in state.steps:
 				
-				if isinstance(step, BridgeStep) and step.start is not None:
+				if isinstance(step, BridgeStep) and step.start is not Ground:
 					routes = resolver.resolve_bridge(state.context[step.start],
 							step.qualifier)
 					branches = []
@@ -153,10 +154,10 @@ class Preprocessor (object):
 						last_step = step.start
 						for item in route[1:-1]:
 							nv = self.new_var()
-							branch.append(SimpleStep(item, nv, last_step))
+							branch.append(LinearStep(item, nv, last_step))
 							branch_context[nv] = item
 							last_step = nv
-						branch.append(SimpleStep(step.qualifier, step.id,
+						branch.append(LinearStep(step.qualifier, step.id,
 								last_step))
 						branches.append((branch, branch_context))
 					
@@ -167,7 +168,7 @@ class Preprocessor (object):
 					state_expansions = sx_new
 	
 				elif isinstance(step, BridgeAttribStep) \
-						and step.start is not None:
+						and step.start is not Ground:
 					
 					routes = resolver.resolve_bridge_attrib(
 							state.context[step.start], step.qualifier)
@@ -179,7 +180,7 @@ class Preprocessor (object):
 						last_step = step.start
 						for item in route[1:]:
 							nv = self.new_var()
-							branch.append(SimpleStep(item, nv, last_step))
+							branch.append(LinearStep(item, nv, last_step))
 							branch_context[nv] = item
 							last_step = nv
 						branch.append(AttribStep(step.qualifier, step.id,

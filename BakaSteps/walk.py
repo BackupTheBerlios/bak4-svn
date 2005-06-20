@@ -5,51 +5,72 @@
 # code released under the gnu gpl, see license.txt
 
 '''
-walk.py
+steps.py
 
 Comprende le classi che costituiscono una rappresentazione astratta
 delle espressioni XPathLog.
 '''
 
-class Walk (object):
-	
-	def __init__(self, refers_to=None):
-		self.refers_to = refers_to
-		self.steps = []
-	
-	def insert(self, pos, step):
-		self.steps.insert(pos, step)
-		return self
-	
-	def __repr__(self):
-		s = ""
-		s += 'Walk'
-		if self.refers_to is not None:
-			s += ' (starting from %s)' % self.refers_to
-		s += ':\n'
-		for i in self.steps:
-			s += '\t' + repr(i) + '\n'
-		return s
+
+class __GroundSingleton (object):
+	def __repr__(self): return 'Ground'
+
+Ground = __GroundSingleton()
+
+
+class __FloatingSingleton (object):
+	def __repr__(self): return 'Floating'
+Floating = __FloatingSingleton()
+
+
+class CircularDependencyException (Exception):
+	pass
 
 
 class Step (object):
 
-	def __init__(self, qualifier, id, start=None):
-		self.qualifier = qualifier
-		self.id = id
+	Name = None
+	
+	def __init__(self, start, id):
 		self.start = start
+		self.id = id
 	
 	def render(self):
 		raise NotImplementedException
-
-
-class SimpleStep (Step):
 	
-	def __init__(self, qualifier, id, start=None):
-		Step.__init__(self, qualifier, id, start)
+	def __str__(self):
+		return self.render()
 	
 	def __repr__(self):
-		return 'SimpleStep(%r, %r, %r)' % (self.qualifier, self.id, self.start)
+		return '%s(%r, %r)' % (self.Name, self.start, self.id)
+	
+	def __cmp__(self, other):
+		if not isinstance(other, Step):
+			return -1
+		if self.start == other.id:
+			if self.id == other.start:
+				raise CircularDependancyException, (self.start, other.start)
+			return 1
+		elif self.id == other.start:
+			return -1
+		else:
+			return cmp(self.start, other.start)
+
+
+class QualifiedStep (Step):
+	
+	def __init__(self, start, qualifier, id):
+		Step.__init__(self, start, id)
+		self.qualifier = qualifier
+	
+	def __repr__(self):
+		return '%s(%r, %r, %r)' % (self.Name, self.start, self.qualifier,
+				self.id)
+
+
+class LinearStep (QualifiedStep):
+	
+	Name = 'LinearStep'
 	
 	def render(self):
 		return self.start + '/' + self.qualifier + '->' + self.id 
@@ -57,51 +78,35 @@ class SimpleStep (Step):
 
 class StarStep (Step):
 	
-	def __init__(self, id, start=None):
-		Step.__init__(self, '*', id, start)
-
-	def __repr__(self):
-		return 'StarStep(%r, %r)' % (self.id, self.start)
-
+	Name = 'StarStep'
+	
 	def render(self):
 		return self.start + '/*->' + self.id 
 
 
-class BridgeStep (Step):
-	
-	def __init__(self, qualifier, id, start=None):
-		Step.__init__(self, qualifier, id, start)
-
-	def __repr__(self):
-		return 'BridgeStep(%r, %r, %r)' % (self.qualifier, self.id, self.start)
+class BridgeStep (QualifiedStep):
+		
+	Name = 'BridgeStep'
 
 	def render(self):
-		if self.start is None:
+		if self.start is Ground:
 			return '//' + self.qualifier + '->' + self.id
 		else:
 			return self.start + '//' + self.qualifier + '->' + self.id 
 
 
 class UpStep (Step):
-	
-	def __init__(self, id, start=None):
-		Step.__init__(self, '..', id, start)
+		
+	Name = 'UpStep'
 
-	def __repr__(self):
-		return 'UpStep(%r, %r)' % (self.id, self.start)
-	
 	def render(self):
 		return self.start + '/..->' + self.id 
 
 
-class AttribStep (Step):
+class AttribStep (QualifiedStep):
+
+	Name = 'AttribStep'
 	
-	def __init__(self, qualifier, id, start=None):
-		Step.__init__(self, qualifier, id, start)
-
-	def __repr__(self):
-		return 'AttribStep(%r, %r, %r)' % (self.qualifier, self.id, self.start)
-
 	def render(self):
 		if self.qualifier.startswith('$'):
 			return self.start + '/' + self.qualifier[1:] + '()->' + self.id
@@ -109,18 +114,12 @@ class AttribStep (Step):
 			return self.start + '/@' + self.qualifier + '->' + self.id 
 
 
-
-class BridgeAttribStep (Step):
+class BridgeAttribStep (QualifiedStep):
 	
-	def __init__(self, qualifier, id, start=None):
-		Step.__init__(self, qualifier, id, start)
-
-	def __repr__(self):
-		return 'BridgeAttribStep(%r, %r, %r)' % \
-				(self.qualifier, self.id, self.start)
+	Name = 'BridgeAttribStep'
 	
 	def render(self):
-		if self.start is None:
+		if self.start is Ground:
 			if self.qualifier.startswith('$'):
 				return '//@' + self.qualifier + '->' + self.id 
 			else:
@@ -130,17 +129,3 @@ class BridgeAttribStep (Step):
 				return self.start + '//@' + self.qualifier + '->' + self.id 
 			else:
 				return self.start + '//' + self.qualifier[1:] + '()->' + self.id
-
-
-class Comparison (object):
-	
-	def __init__(self, lhs, op, rhs):
-		self.lhs = lhs
-		self.op = op
-		self.rhs = rhs
-	
-	def __repr__(self):
-		return self.render()
-	
-	def render(self):
-		return "'%s'('%s', '%s')" % (self.op, self.lhs, self.rhs)

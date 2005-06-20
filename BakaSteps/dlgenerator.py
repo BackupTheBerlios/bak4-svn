@@ -27,7 +27,7 @@ class DatalogGenerator (object):
 		
 		for step in steps:
 			
-			if isinstance(step, SimpleStep):
+			if isinstance(step, LinearStep):
 				rv.append(self.document.create_atom(step.qualifier,
 						{'$id': step.id, '$parent': step.start}))
 			

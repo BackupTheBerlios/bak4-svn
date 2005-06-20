@@ -16,6 +16,13 @@ from spark07 import GenericParser
 from xplscanner import XPathLogScanner
 from mytoken import Token
 from walk import * 
+from atom import MathAtom
+
+
+def join(step, step_list):
+	if len(step_list) > 0:
+		step_list[0].start = step.id
+	return [step] + step_list
 
 
 class XPLParsingException (Exception):
@@ -39,161 +46,151 @@ class XPathLogParser (GenericParser):
 		GenericParser.__init__(self, start)
 		self.filters = []
 		self.comparisons = []
-		self.walks = []
 		self.generated_var_count = 0
 	
-	def postprocess(self, walks):
-		rv = []
-		for item in walks:
-			if not isinstance(item, Walk):
-				rv.append(item)
-				continue
-			steps = item.steps[:]
-			last_step = item.refers_to
-			for step in steps:
-				step.start = last_step
-				last_step = step.id
-			rv.extend(steps)
-		return rv
-		
 	def p_denial(self, args):
 		'''
 			denial ::= expression_list
 		'''
-		self.walks = args[0]
-		self.walks.extend(self.filters)
-		return self.postprocess(self.walks + self.comparisons)
+		rv = args[0] + self.filters + self.comparisons
+		rv.sort()
+		for i in rv:
+			print i
+		return rv
 	
 	def p_expression_list_1(self, args):
 		'''
 			expression_list ::= expression COMMA expression_list
 		'''
-		if args[2] is not None:
-			args[2].insert(0, args[0])
-		return args[2]
+		return args[0] + args[2]
 	
 	def p_expression_list_2(self, args):
 		'''
 			expression_list ::= expression
 		'''
-		if args[0] is None:
-			return []
-		else:
-			return args
+		return args[0]
 	
 	def p_expression_1(self, args):
 		'''
-			expression ::= VAR COMPARE comparison_rhs
+			expression ::= compare_term COMPARE compare_term
 		'''
-		# in teoria, l'AP non-deterministico corrispondente a questa grammatica
-		# riconoscerebbe la stringa in due rami di esecuzione diversi
-		# (questo e il prossimo);  l'AP deterministico implementato
-		# da SPARK si "accontenta" di espandere questa produzione.
-		# è il comportamento che desideriamo.
-		self.comparisons.append(Comparison(args[0].value, args[1].value,
-			args[2].value))
-		
+		self.comparisons.append(
+				MathAtom(args[1].value, args[0][0], args[2][0]))
+		return args[0][1] + args[2][1]
+	
 	def p_expression_2(self, args):
 		'''
-			expression ::= path COMPARE comparison_rhs
 			expression ::= path
 		'''
-		if len(args) == 3:
-			last_step_id = args[0].steps[-1].id
-			self.comparisons.append(Comparison(last_step_id, args[1].value,
-				args[2].value))
 		return args[0]
+		
+	def p_compare_term_1(self, args):
+		'''
+			compare_term ::= path
+		'''
+		return (args[0][-1].id, args[0])
+	
+	def p_compare_term_2(self, args):
+		'''
+			compare_term ::= VAR
+			compare_term ::= math
+		'''
+		return (args[0].value, [])
 	
 	def p_path_1(self, args):
 		'''
-			path ::= VAR path_cnt
+			path ::= VAR path_cnt_nonempty
 		'''
-		if len(args[1].steps) == 0:
-			return None
-		else:
-			args[1].refers_to = args[0].value
-			return args[1]
+		args[1][0].start = args[0].value
+		return args[1]
 	
 	def p_path_2(self, args):
 		'''
 			path ::= DSLASH ELEMENT spec path_cnt
 		'''
-		return args[3].insert(0, BridgeStep(args[1].value, args[2]))
+		return join(BridgeStep(Ground, args[1].value, args[2]), args[3])
 	
 	def p_path_3(self, args):
 		'''
 			path ::= UP spec path_cnt
 		'''
-		return args[2].insert(0, UpStep(args[1]))
-
+		return join(UpStep(Floating, args[1]), args[2])
+	
 	def p_path_4(self, args):
 		'''
 			path ::= STAR spec path_cnt
 		'''
-		return args[2].insert(0, StarStep(args[1]))
+		return join(StarStep(Floating, args[1]), args[2])
 	
 	def p_path_5(self, args):
 		'''
 			path ::= ELEMENT spec path_cnt
 		'''
-		return args[2].insert(0, SimpleStep(args[0].value, args[1]))
+		return join(LinearStep(Floating, args[0].value, args[1]), args[2])
 	
 	def p_path_6(self, args):
 		'''
 			path ::= ATTRIBUTE bind
 			path ::= CALL bind
 		'''
-		return Walk().insert(0, AttribStep(args[0].value, args[1]))
+		return [AttribStep(Floating, args[0].value, args[1])]
 	
 	def p_path_7(self, args):
 		'''
 			path ::= DSLASH ATTRIBUTE bind
 		'''
-		return Walk().insert(0, BridgeAttribStep(args[1].value, args[2]))
+		return [BridgeAttribStep(Ground, args[1].value, args[2])]
 	
-	def p_path_cnt_1(self, args):
+	def p_path_cnt(self, args):
 		'''
-			path_cnt ::= SLASH ELEMENT spec path_cnt
+			path_cnt ::= path_cnt_empty
+			path_cnt ::= path_cnt_nonempty
 		'''
-		return args[3].insert(0, SimpleStep(args[1].value, args[2]))
+		return args[0]
 	
-	def p_path_cnt_2(self, args):
+	def p_path_cnt_nonempty_1(self, args):
 		'''
-			path_cnt ::= DSLASH ELEMENT spec path_cnt
+			path_cnt_nonempty ::= SLASH ELEMENT spec path_cnt
 		'''
-		return args[3].insert(0, BridgeStep(args[1].value, args[2]))
+		return join(LinearStep(None, args[1].value, args[2]), args[3])
 	
-	def p_path_cnt_3(self, args):
+	def p_path_cnt_nonempty_2(self, args):
 		'''
-			path_cnt ::= SLASH UP spec path_cnt
+			path_cnt_nonempty ::= DSLASH ELEMENT spec path_cnt
 		'''
-		return args[3].insert(0, UpStep(args[2]))
+		return join(BridgeStep(None, args[1].value, args[2]), args[3])
 	
-	def p_path_cnt_4(self, args):
+	def p_path_cnt_nonempty_3(self, args):
 		'''
-			path_cnt ::= SLASH STAR spec path_cnt
+			path_cnt_nonempty ::= SLASH UP spec path_cnt
 		'''
-		return args[3].insert(0, StarStep(args[2]))
+		return join(UpStep(None, args[2]), args[3])
 	
-	def p_path_cnt_5(self, args):
+	def p_path_cnt_nonempty_4(self, args):
 		'''
-			path_cnt ::= SLASH ATTRIBUTE bind
-			path_cnt ::= SLASH CALL bind
+			path_cnt_nonempty ::= SLASH STAR spec path_cnt
 		'''
-		return Walk().insert(0, AttribStep(args[1].value, args[2]))
+		return join(StarStep(None, args[2]), args[3])
 	
-	def p_path_cnt_6(self, args):
+	def p_path_cnt_nonempty_5(self, args):
 		'''
-			path_cnt ::= DSLASH ATTRIBUTE bind
-			path_cnt ::= DSLASH CALL bind
+			path_cnt_nonempty ::= SLASH ATTRIBUTE bind
+			path_cnt_nonempty ::= SLASH CALL bind
 		'''
-		return Walk().insert(0, BridgeAttribStep(args[1].value, args[2]))		
-
-	def p_path_cnt_7(self, args):
+		return [AttribStep(None, args[1].value, args[2])]
+	
+	def p_path_cnt_nonempty_6(self, args):
 		'''
-			path_cnt ::=
+			path_cnt_nonempty ::= DSLASH ATTRIBUTE bind
+			path_cnt_nonempty ::= DSLASH CALL bind
 		'''
-		return Walk()
+		return [BridgeAttribStep(None, args[1].value)]
+	
+	def p_path_cnt_empty(self, args):
+		'''
+			path_cnt_empty ::=
+		'''
+		return []
 	
 	def p_spec(self, args):
 		'''
@@ -203,9 +200,10 @@ class XPathLogParser (GenericParser):
 		if len(args) == 1:
 			return args[0]
 		else:
-			for expression in args[1]:
-				expression.refers_to = args[3]
-			self.filters.extend(args[1])
+			for step in args[1]:
+				if step.start is Floating:
+					step.start = args[3]
+			self.filters += args[1]
 			return args[3]
 	
 	def p_bind(self, args):
@@ -222,13 +220,8 @@ class XPathLogParser (GenericParser):
 	
 	def p_math(self, args):
 		'''
-			comparison_rhs ::= math_expr
-			comparison_rhs ::= string_expr
-			
-			string_expr ::= string_operand PLUS string_expr
-			string_expr ::= string_operand
-			string_operand ::= STRINGVALUE
-			string_operand ::= VAR
+			math ::= STRINGVALUE
+			math ::= math_expr
 			
 			math_expr ::= math_prod PLUS math_expr
 			math_expr ::= math_prod MINUS math_expr
@@ -255,7 +248,7 @@ class XPathLogParser (GenericParser):
 	def error(self, token):
 		raise XPLParsingException, 'Error: unexpected token "%s".' \
 			% token.value
-	
+
 
 def main(ask_for_return=False):
 	import sys
@@ -274,9 +267,6 @@ def main(ask_for_return=False):
 	
 	if ask_for_return:
 		return k
-	
-	for i in k:
-		print i
 
 
 if __name__ == '__main__':
