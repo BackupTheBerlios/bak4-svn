@@ -15,7 +15,7 @@ che accompagna il programma.
 from spark07 import GenericParser
 from xplscanner import XPathLogScanner
 from mytoken import Token
-from walk import * 
+from step import * 
 from atom import MathAtom
 
 

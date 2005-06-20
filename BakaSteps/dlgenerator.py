@@ -10,7 +10,7 @@ dlgenerator.py
 Genera espressioni Datalog a partire da cammini XPathLog semplificati.
 '''
 
-from walk import *
+from step import *
 from atom import *
 
 

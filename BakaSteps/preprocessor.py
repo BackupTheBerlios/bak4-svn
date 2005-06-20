@@ -12,7 +12,7 @@ BridgeAttribStep) trasformandoli in cammini semplici, contenenti solo
 LinearStep ed AttribStep.
 '''
 
-from walk import *
+from step import *
 from atom import *
 
 '''

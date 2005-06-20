@@ -5,7 +5,7 @@
 # code released under the gnu gpl, see license.txt
 
 '''
-steps.py
+step.py
 
 Comprende le classi che costituiscono una rappresentazione astratta
 delle espressioni XPathLog.
