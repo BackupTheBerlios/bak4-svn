@@ -63,7 +63,6 @@ class DatalogGenerator (object):
 
 
 def simplify_linear(datalog_expr):
-	# XXX
 	comparisons = []
 	hashes = {}
 	
@@ -80,7 +79,7 @@ def simplify_linear(datalog_expr):
 	
 	return hashes.values() + comparisons
 
-'''
+
 import testhelper
 
 doc = testhelper.sdd_azienda
@@ -90,9 +89,5 @@ atom_a = doc.create_atom('dipendente', {'$id': 'Id', 'grado': 'X',
 atom_b = doc.create_atom('dipendente', {'$id': 'Id', 'grado': 'Y',
 	'cognome': '"Pluto"'})
 
-for i in simplify([atom_a, atom_b]):
-	print i
-print '---'
 for i in simplify_linear([atom_a, atom_b]):
 	print i
-'''

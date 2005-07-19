@@ -56,13 +56,13 @@ class XPathLogScanner (GenericScanner):
 		pass
 	
 	def t_aaa_call(self, s):
-		r' (pos|text) \s* \( \s* \) '
+		r' (pos|text) \( \) '
 		# la sequenza "aaa" fa' sì che SPARK effettui il matching contro
 		# questa regex prima che contro tutte le altre: secondo la
 		# documentazione, GenericScanner segue l'ordine alfabetico.pos()
 		# potrebbe essere infatti interpretato come ELEMENT(pos), OPENPAR,
 		# CLOSEPAR.
-		self.rv.append(Token('CALL', s))
+		self.rv.append(Token('CALL', '$' + s[:-2]))
 	
 	def t_operator(self, s):
 		r' ( \+ | \- (?! >) | \( | \) )'
@@ -151,7 +151,7 @@ if __name__ == '__main__':
 	try:
 		s = raw_input()
 	except EOFError:
-		s = '?a $Abc pos()'
+		s = '@abc pos()'
 		print s
 		print
 	

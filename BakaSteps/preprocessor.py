@@ -113,7 +113,7 @@ class Preprocessor (object):
 						# attenzione: $A/..->$B va tradotto come
 						# tipo_a($A, _, $B, ...)
 						# cioè con un LinearStep che parta da step.id
-						# e arrivi a step.start (totale asimmetria).
+						# e arrivi a step.start (asimmetrico rispetto al resto).
 						branch = [LinearStep(step.id, state.context[step.start],
 								step.start)]
 						rv.append(state.fork(branch, {step.id: alternative}))
@@ -180,11 +180,11 @@ class Preprocessor (object):
 						last_step = step.start
 						for item in route[1:]:
 							nv = self.new_var()
-							branch.append(LinearStep(item, nv, last_step))
+							branch.append(LinearStep(last_step, item, nv))
 							branch_context[nv] = item
 							last_step = nv
-						branch.append(AttribStep(step.qualifier, step.id,
-								last_step))
+						branch.append(AttribStep(last_step, step.qualifier,
+								step.id))
 						branches.append((branch, branch_context))
 					
 					sx_new = []
@@ -194,7 +194,8 @@ class Preprocessor (object):
 								for exp in state_expansions])
 					state_expansions = sx_new
 				
-				elif isinstance(step, BridgeAttribStep) and step.start is None:
+				elif isinstance(step, BridgeAttribStep) \
+						and step.start is Ground:
 					
 					alternatives = [x for x in self.document.elements
 						if step.qualifier in self.document.elements[x]]
@@ -202,8 +203,8 @@ class Preprocessor (object):
 					
 					for alternative in alternatives:
 						nv = self.new_var()
-						branch = [BridgeAttribStep(alternative, nv, None),
-								AttribStep(qualifier, id, nv)]
+						branch = [BridgeStep(Ground, alternative, nv),
+								AttribStep(nv, qualifier, id)]
 						branch_context = {nv: alternative, id: '$'}
 						branches.append((branch, branch_context))
 					

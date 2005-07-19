@@ -49,15 +49,19 @@ class Document (object):
 	def __init__(self, elements, edges, pcdata):
 		self.elements = elements
 		self.edges = edges
-		self.pcdata = pcdata
+		for element in pcdata:
+			self.elements[element].append('$text')
 		self.resolver = resolver.Resolver(self, generate_graphs=True)
+	
+	def __contains__(self, other):
+		return other in self.elements
 	
 	def check_element(self, element, throw=True):
 		'''
 		Solleva un'eccezione di tipo NoSuchElement se l'elemento passato
 		come parametro non è presente nella descrizione della struttura.
 		'''
-		if element not in self.elements:
+		if element not in self:
 			if throw:
 				raise NoSuchElement(element)
 			else:
@@ -87,7 +91,7 @@ class Document (object):
 	
 	def create_atom(self, element, parameters=None):
 		'''
-		Crea un atomo Prolog -- sotto forma di un oggetto di tipo Atom -- che
+		Crea un atomo Datalog -- sotto forma di un oggetto di tipo Atom -- che
 		si riferisce all'elemento indicato.
 		'''
 		self.check_element(element)

@@ -77,8 +77,6 @@ def check_fragment(node, document=None, parent=None):
  	 	# dica "lo giuro".
 		found = get_attributes(node)
 		expected = document.elements[node.tagName]
-		if node.tagName in document.pcdata:
-			expected.append('$text')
 		invalid = [x for x in found if x not in expected]
 		missing = [x for x in expected if x not in found]
 		if len(invalid) != 0:

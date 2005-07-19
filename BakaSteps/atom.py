@@ -16,7 +16,7 @@ def quote_prolog_vars(container):
 	Restituisce una copia del dizionario o della lista passato/a come parametro
 	nella quale i valori che rappresentano variabili Datalog o parametri (ossia
 	tutti quelli che iniziano con la maiuscola o con un punto interrogativo)
-	sono virgolettati, come richiesto dai programmi a valle. 
+	vengono racchiuse tra apici, come richiesto dai programmi a valle. 
 	'''
 	if type(container) is dict:
 		# non tocchiamo il dizionario originale!

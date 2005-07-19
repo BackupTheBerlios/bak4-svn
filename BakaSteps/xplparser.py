@@ -184,7 +184,7 @@ class XPathLogParser (GenericParser):
 			path_cnt_nonempty ::= DSLASH ATTRIBUTE bind
 			path_cnt_nonempty ::= DSLASH CALL bind
 		'''
-		return [BridgeAttribStep(None, args[1].value)]
+		return [BridgeAttribStep(None, args[1].value, args[2])]
 	
 	def p_path_cnt_empty(self, args):
 		'''

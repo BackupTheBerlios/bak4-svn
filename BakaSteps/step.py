@@ -121,11 +121,11 @@ class BridgeAttribStep (QualifiedStep):
 	def render(self):
 		if self.start is Ground:
 			if self.qualifier.startswith('$'):
-				return '//@' + self.qualifier + '->' + self.id 
+				return '//' + self.qualifier[1:] + '()->' + self.id 
 			else:
-				return '//' + self.qualifier[1:] + '()->' + self.id
+				return '//@' + self.qualifier + '->' + self.id
 		else:
 			if self.qualifier.startswith('$'):
-				return self.start + '//@' + self.qualifier + '->' + self.id 
+				return self.start + '//' + self.qualifier[1:] + '()->' + self.id 
 			else:
-				return self.start + '//' + self.qualifier[1:] + '()->' + self.id
+				return self.start + '//@' + self.qualifier + '->' + self.id
