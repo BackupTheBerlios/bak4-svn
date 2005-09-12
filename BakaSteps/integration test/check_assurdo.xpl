@@ -1,1 +1,0 @@
-//dipendente[pos() = *//text()]
