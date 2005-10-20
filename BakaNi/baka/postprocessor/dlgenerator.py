@@ -18,7 +18,7 @@ class DatalogGenerator (object):
     def __init__(self, dtcollection, var_factory=None):
         self.dtcollection = dtcollection
         if var_factory is None:
-            self.new_var = VarGenerator.factory('B_X')
+            self.new_var = VarGenerator.factory('X')
         else:
             self.new_var = var_factory
     

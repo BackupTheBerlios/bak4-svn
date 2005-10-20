@@ -32,27 +32,19 @@ class VarGenerator (object):
         
         cls.TheLock.release()
         
-        return var_format % i
+        if var_format.startswith('?') or var_format[0].islower():
+            return var_format % i
+        else:
+            return 'B_' + var_format % i
     
     @classmethod
     def factory(cls, var_format):
         '''
-            Restituisce una funzione che ad ogni chiamata restituisce una nuova
-            variabile nel formato indicato.
+            Restituisce una funzione che ad ogni chiamata restituisce una
+            nuova variabile nel formato indicato.
         '''
-        cls.TheLock.acquire()
-        
         if '%' not in var_format:
             var_format += '%d'
-        if var_format not in cls.indexes:
-            cls.indexes[var_format] = 0
-        def rv():
-            cls.TheLock.acquire()
-            i = cls.indexes[var_format]
-            cls.indexes[var_format] += 1
-            cls.TheLock.release()            
-            return var_format % i
-        
-        cls.TheLock.release()
-        
-        return rv
+        def f():
+            return cls.create_var(var_format)        
+        return f

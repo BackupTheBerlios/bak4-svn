@@ -12,11 +12,21 @@ from baka.util.vargenerator import *
 
 
 def quote(container):
+    
     def q(x):
         if x.startswith('?') or x == '_':
+            # le pseudocostanti e le variabili anonime non devono subire
+            # escaping
             return x
+        elif not x[0].isalnum():
+            # simboli speciali hanno bisogno di apici e di un prefisso
+            # costituito da una lettera minuscola (prolog li deve riconoscere
+            # come costanti)
+            return "'x_" + x + "'"
         else:
-            return "'%s'" % x
+            # business as usual
+            return "'" + x + "'"
+        
     if type(container) is list:
         rv = []
         for v in container:
@@ -50,7 +60,6 @@ class Atom (object):
         interp = '%%(%s)s'
         args = ', '.join([interp % par for par in self.required_parameters])
         
-        
         if doctype.id is not None:
             at_document = '@' + doctype.id
         else:
@@ -61,21 +70,9 @@ class Atom (object):
         return Atom(self.doctype, self.element, self.parameters.copy())
     
     def compatible_with(self, other):
-        
         if(isinstance(other, Atom) and self.doctype == other.doctype and
                         self.element == other.element):
-            
-            # caso particolare:
-            # due atomi che riguardano l'elemento radice dello stesso
-            # documento sono compatibili.
-            
-            if (self.element == doctype.id and
-                    '$parent' in self.parameters and
-                    '$parent' in other.parameters and
-                    self.parameters['$parent'] ==
-                            other.parameters['$parent']):
-                return True
-            
+                        
             # due atomi sono compatibili se fanno riferimento allo stesso
             # tipo di elemento dello stesso tipo di documento e hanno
             # lo stesso id.
@@ -105,7 +102,7 @@ class Atom (object):
     
     def render(self, var_factory=None, human_readable=False):        
         if var_factory is None:
-            var_factory = VarGenerator.factory('B_X')
+            var_factory = VarGenerator.factory('X')
         params = self.parameters.copy()
         for p in self.required_parameters:
             if p not in params:
@@ -116,6 +113,9 @@ class Atom (object):
         return self.template % quote(params)
     
     def __str__(self):
+        return self.render(human_readable=True)
+    
+    def __repr__(self):
         return self.render(human_readable=True)
 
 

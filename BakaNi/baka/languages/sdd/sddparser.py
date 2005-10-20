@@ -34,16 +34,16 @@ class SDDParser (Parser):
     
     def p_document_defs(self, args):
         '''
-                document_defs ::= document_def document_defs
-                document_defs ::=
+            document_defs ::= document_def document_defs
+            document_defs ::=
         '''
         pass
     
     def p_document_def(self, args):
         '''
-                document_def ::=
-                                KW_DOCTYPE ID OPENPAREN files CLOSEPAREN
-                                OPENBRACE elements CLOSEBRACE
+            document_def ::=
+                KW_DOCTYPE ID OPENPAREN files CLOSEPAREN
+                OPENBRACE elements CLOSEBRACE
         '''
         
         id = args[1].value
@@ -92,14 +92,14 @@ class SDDParser (Parser):
     
     def p_elements(self, args):
         '''
-                elements ::= element SEMICOLON elements
-                elements ::= element SEMICOLON
+            elements ::= element SEMICOLON elements
+            elements ::= element SEMICOLON
         '''
         pass
     
     def p_element(self, args):
         '''
-                element ::= ID ARROW attribute_list contents
+            element ::= ID ARROW attribute_list contents
         '''
         id = args[0].value
         attributes = args[2]
@@ -116,8 +116,8 @@ class SDDParser (Parser):
     
     def p_attribute_list(self, args):
         '''
-                attribute_list ::= OPENPAREN idlist CLOSEPAREN
-                attribute_list ::=
+            attribute_list ::= OPENPAREN idlist CLOSEPAREN
+            attribute_list ::=
         '''
         if len(args) == 0:
             return []
@@ -126,20 +126,20 @@ class SDDParser (Parser):
     
     def p_contents_1(self, args):
         '''
-                contents ::= idlist
+            contents ::= idlist
         '''
         return False, args[0]
     
     def p_contents_2(self, args):
         '''
-                contents ::= KW_PCDATA
+            contents ::= KW_PCDATA
         '''
         return True, None
     
     def p_idlist(self, args):
         '''
-                idlist ::= idlist_full
-                idlist ::=
+            idlist ::= idlist_full
+            idlist ::=
         '''
         if len(args) == 0:
             return []
@@ -148,8 +148,8 @@ class SDDParser (Parser):
     
     def p_idlist_full(self, args):
         '''
-                idlist_full ::= ID COMMA idlist_full
-                idlist_full ::= ID
+            idlist_full ::= ID COMMA idlist_full
+            idlist_full ::= ID
         '''
         if len(args) == 1:
             return [args[0].value]
@@ -188,5 +188,5 @@ if __name__ == '__main__':
     
     '''
     
-    from scanner import SDDScanner
+    from sddscanner import SDDScanner
     processor(SDDScanner, SDDParser)(string=sdp, debug=True)

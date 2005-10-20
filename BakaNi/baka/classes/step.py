@@ -117,7 +117,7 @@ class BridgeAttribStep (QualifiedStep):
 
 
 def create_walk(step_sequence, start_type, start_id, end_id, doctype=None,
-                var_format='B_Walk'):
+                var_format='Walk'):
     '''
         Crea una serie di passi semplici (LinearSteps) che parte da un
         elemento con ID start_id e giunge ad un elemento con ID end_id,

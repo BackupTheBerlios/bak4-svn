@@ -23,7 +23,7 @@ class Postprocessor (object):
         self.dtcollection = dtcollection
         if var_factory is None:
             print 'no no no'
-            self.new_var = VarGenerator.factory('B_Lin')
+            self.new_var = VarGenerator.factory('Lin')
         else:
             print 'ok'
             self.new_var = var_factory

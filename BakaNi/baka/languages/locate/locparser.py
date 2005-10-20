@@ -28,7 +28,7 @@ class LocParser (Parser):
         if var_generator is None:
             var_generator = VarGenerator
         self.new_id = var_generator.factory('?i')
-        self.new_var = var_generator.factory('B_')
+        self.new_var = var_generator.factory('L')
     
     def p_location(self, args):
         '''

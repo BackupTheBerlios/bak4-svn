@@ -51,26 +51,26 @@ class XPLScanner (Scanner):
     
     def t_number(self, s):
         r' ( \.\d+ | \d+(\.\d+)? ) '
-        self.push('NUMBER', s)
+        self.push('NUMBER', 'n_' + s)
     
     def t_string(self, s):
-        ' ( "[^"]*" ) '
-        self.push('STRING', '__' + s[1:-1])
+        ''' ( "[^"']*" ) '''
+        self.push('STRING', 's_' + s[1:-1])
     
     def t_element(self, s):
-        r' ([a-zA-Z]+\:)?[a-zA-Z][a-zA-Z0-9_אטילעש]* '
+        r' ([a-zA-Z]+\:)?[a-zA-Z][a-zA-Z0-9_]* '
         self.push('ELEMENT', s)
     
     def t_var(self, s):
-        r' \$[A-Z][a-zA-Z0-9_אטילעש]* '
-        self.push('VAR', s[1:])
+        r' \$[a-zA-Z][a-zA-Z0-9_]* '
+        self.push('VAR', 'V_' + s[1:])
     
     def t_metaconst(self, s):
-        r' \?[a-zA-Z][a-zA-Z0-9_אטילעש]* '
+        r' \?[a-zA-Z][a-zA-Z0-9_]* '
         self.push('VAR', s)
     
     def t_attribute(self, s):
-        r' @([a-zA-Z]+\:)?[a-zA-Z][a-zA-Z0-9_אטילעש]* '
+        r' @([a-zA-Z]+\:)?[a-zA-Z][a-zA-Z0-9_]* '
         self.push('ATTRIBUTE', s[1:])
     
     def t_keyword(self, s):

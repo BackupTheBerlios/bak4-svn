@@ -61,7 +61,8 @@ class Resolver (object):
     
     def resolve_bridge(self, from_type, step, var_factory=None):
         assert isinstance(step, BridgeStep)
-        bridge_filter = lambda x: x[0] == from_type and x[-1] == step.qualifier
+        bridge_filter = (lambda x:
+                x[0] == from_type and x[-1] == step.qualifier)
         return self.resolution_walks(bridge_filter, step.start, step.id,
                         step.doctype, var_factory)
     
@@ -82,26 +83,27 @@ class Resolver (object):
         assert isinstance(step, BridgeAttribStep)
         
         bridge_var = self.new_var()
-        bridge_arrivals = filter(lambda x: step.qualifier in self.elements[x],
-                        self.elements)
+        bridge_arrivals = filter(
+                lambda x: step.qualifier in self.elements[x],
+                self.elements)
         forged_steps = [BridgeStep(step.start, arrival, bridge_var,
-                        step.doctype, var_factory) for arrival in bridge_arrivals]
+                step.doctype, var_factory) for arrival in bridge_arrivals]
         solutions = [resolve_bridge(from_type, forged_step, var_factory)
-                        for forged_step in forged_steps]
+                for forged_step in forged_steps]
         
         for steps, context in solutions:
             steps.append(AttribStep(bridge_var, step.qualifier, step.id,
-                            step.doctype))
+                    step.doctype))
             context[step.qualifier] = Text
         
         return solutions
     
     def resolution_walks(self, filter_cond, start_id, end_id, doctype,
-                    var_factory=None):
+            var_factory=None):
         walks = filter(filter_cond, self.edges)
         
         if len(walks) == 0:
             raise StepExpansionError, (start_id, end_id)
         
         return [create_walk(walk, start_id, end_id, doctype, var_factory)
-                        for walk in walks]
+                for walk in walks]

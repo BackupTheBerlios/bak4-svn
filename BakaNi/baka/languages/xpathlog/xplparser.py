@@ -24,15 +24,12 @@ def join_steps(step, step_list):
 
 class XPLParser (Parser):
     
-    def __init__(self, start='denial', var_generator=None):
+    def __init__(self, start='denial'):
         Parser.__init__(self, start)
         self.comparisons = []
         self.filters = []
-        if var_generator is None:
-            self.create_var = VarGenerator.create_var
-        else:
-            self.create_var = var_generator.create_var
-        self.documents = {DefaultDocument: self.create_var('B_Doc')}
+        self.create_var = VarGenerator.create_var
+        self.documents = {DefaultDocument: self.create_var('x_doc')}
     
     def p_denial(self, args):
         '''
@@ -242,7 +239,7 @@ class XPLParser (Parser):
         '''
         doc = args[2].value
         if doc not in self.documents:
-            self.documents[doc] = self.create_var('B_Doc')
+            self.documents[doc] = self.create_var('x_doc')
         self.debug(self.documents[doc])
         return self.documents[doc]
     
@@ -271,7 +268,7 @@ class XPLParser (Parser):
                 bind ::=
         '''
         if len(args) == 0:
-            rv = self.create_var('B_Step')
+            rv = self.create_var('Step')
             self.debug(rv)
             return rv
         else:

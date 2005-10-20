@@ -1,4 +1,3 @@
-#!/usr/bin/env pythonw2.4
 # encoding: latin-1
 
 # copyright (c) domenico carbotta <domenico.carbotta@gmail.com>, 2005
@@ -80,9 +79,12 @@ def processor(scanner_class, parser_class, debug=False):
                 raise ValueError, 'Nothing to parse.'
         tokens = scanner_class().tokenize(string)
         
+        if debug:
+            for t in tokens:
+                print t
         ## effettuo il tracing di tutte le chiamate a metodo effettuate
         ## da spark.
-        ## non è una buona idea: output caotico
+        ## non Ã¨ una buona idea: output caotico
         ##
         ## import sys
         ## if debug:

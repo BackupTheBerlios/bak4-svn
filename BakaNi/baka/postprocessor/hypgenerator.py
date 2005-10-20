@@ -25,7 +25,7 @@ def is_ground(x):
     return type(x) is str and not x[0].isupper()
     
     
-def generate_hypotheses(atoms, var_format='B_Hyp'):
+def generate_hypotheses(atoms, var_format='Hyp'):
     '''
         Riformula la conoscenza espressa negli atomi passati come
         parametro sotto forma di un insieme di denials.

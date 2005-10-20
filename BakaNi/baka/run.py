@@ -79,7 +79,7 @@ def main(human_readable=False):
         ]
     
     print
-    print '~' * 60
+    print '-' * 60
     print 'vincoli:'
     print_denials(xpl_dl, human_readable)
     
@@ -97,7 +97,7 @@ def main(human_readable=False):
     
     print
     print '-'*80
-    print 'simp('
+    print '[simp].   simp('
     print '[', ','.join(map(str, xml_p)), '],'
     print_denials(xml_denials + loc_denials + cmp_denials, False, '')
     print ','

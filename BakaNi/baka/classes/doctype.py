@@ -48,12 +48,12 @@ class DocType (object):
     def check_element(self, element, throw=True):
         '''
         Solleva un'eccezione di tipo NoSuchElement se l'elemento passato
-        come parametro non è presente nella descrizione della struttura.
+        come parametro non Ã¨ presente nella descrizione della struttura.
         '''
         if element not in self:
             if throw:
-                raise MappingError('Element %s does not exist in doctype %s.' %
-                                (element, self.id))
+                msg = 'Element %s does not exist in doctype %s.'
+                raise MappingError(msg % (element, self.id))
             else:
                 return False
         return True
@@ -66,9 +66,8 @@ class DocType (object):
         '''
         if attribute not in self.elements[element]:
             if throw:
-                raise MappingError('Attribute %s of element %s does not exist'
-                                'in doctype %s.' %
-                                (attribute, element, self.id))
+                msg = 'Attribute %s of element %s does not exist in doctype %s.'
+                raise MappingError(msg % (attribute, element, self.id))
             else:
                 return False
         return True
@@ -96,5 +95,13 @@ class DTCollection (object):
         self.documents = documents
         self.doctypes = doctypes
     
+    # deprecated!
     def get(self, doc_name):
+        return self.get_by_document(doc_name)
+    
+    def get_by_document(self, doc_name):
         return self.doctypes[self.documents[doc_name]]
+    
+    def get_by_dtid(self, dtid):
+        return self.doctypes[dtid]
+    

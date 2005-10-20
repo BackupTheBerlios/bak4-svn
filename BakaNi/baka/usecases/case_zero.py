@@ -2,7 +2,7 @@
 
 xpl = '''
     //reparto[@nome ~= "ricerca e sviluppo",
-            dipendente[@livello->$L, @stipendio->$W],
+            dipendente[@livello->$L, @stipendio->$W, @stipendio > 10000],
             dipendente[@livello > $L, @stipendio < $W]]
 '''
 
@@ -22,7 +22,7 @@ loc = '''
 '''
 
 fragment = '''
-    <dipendente nome="?n" livello="1" stipendio="?w">
+    <dipendente nome="?n" livello="liv_1" stipendio="?w">
         <incarico>?i</incarico>
     </dipendente>
 '''

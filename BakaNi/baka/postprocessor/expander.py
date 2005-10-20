@@ -42,7 +42,7 @@ def debug(*msg):
         print i,
     print
 
-def expand(steps, dtcollection, var_format='B_Post'):
+def expand(steps, dtcollection, var_format='Post'):
     
     print steps
     var_factory = VarGenerator.factory(var_format)
