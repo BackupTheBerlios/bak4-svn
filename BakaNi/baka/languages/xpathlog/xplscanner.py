@@ -51,7 +51,7 @@ class XPLScanner (Scanner):
     
     def t_number(self, s):
         r' ( \.\d+ | \d+(\.\d+)? ) '
-        self.push('NUMBER', 'n_' + s)
+        self.push('NUMBER', s)
     
     def t_string(self, s):
         ''' ( "[^"']*" ) '''

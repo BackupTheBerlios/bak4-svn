@@ -11,13 +11,16 @@ __all__ = ['datalog_to_xquery']
 from baka.util.vargenerator import *
 from baka.classes.atom import *
 
-def make_xquery_thingie(dl_atom):
+
+def make_xquery_thingie(dl_var):
     if dl_var.startswith('B_'):
         return VarGenerator().new_var('$_')
     elif dl_var.startswith('V_'):
         return '$' + dl_var[2:]
     elif dl_var.startswith('s_'):
         return '"' + dl_var[2:] + '"'
+    else:
+        return dl_var
 
 
 class Clause (object):
@@ -95,7 +98,7 @@ def sort(clauses):
 
         if len(zero_dep) == 0:
             raise ValueError(clauses)
-
+        
         ordered_list += zero_dep
 
 

@@ -32,7 +32,7 @@ class VarGenerator (object):
         
         cls.TheLock.release()
         
-        if var_format.startswith('?') or var_format[0].islower():
+        if var_format[0] in ['$', '?'] or var_format[0].islower():
             return var_format % i
         else:
             return 'B_' + var_format % i

@@ -35,6 +35,9 @@ class XMLTranslator (object):
                     generate_pos=False):
         rv = []
         attributes = node.attributes.copy()
+        for k, v in attributes.iteritems():
+            if not v.isdigit() and not v.startswith('?'):
+                attributes[k] = 's_' + v
         id = self.new_var()
         attributes['$id'] = id
         attributes['$parent'] = parent_id
