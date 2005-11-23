@@ -1,5 +1,5 @@
 #!/usr/bin/env python2.4
-# encoding: latin-1
+# encoding: utf-8
 
 # copyright (c) domenico carbotta <domenico.carbotta@gmail.com>, 2005
 # code released under the gnu gpl, see license.txt
@@ -50,7 +50,7 @@ class MyNode (object):
 
 
 def check_fragment(node, doctype=None, parent=None):
-    # controlliamo che node non sia un mixed element: se contiene più
+    # controlliamo che node non sia un mixed element: se contiene piÃ¹
     # di un nodo figlio, tutti i nodi di tipo Text devono essere composti
     # soltanto da whitespace
     if len(node.childNodes) > 1:
@@ -60,12 +60,12 @@ def check_fragment(node, doctype=None, parent=None):
                     raise MixedElementException, n.tagName
     
     if doctype is not None:
-        # controlliamo se il tipo dell'elemento è valido
+        # controlliamo se il tipo dell'elemento Ã¨ valido
         if not doctype.check_element(node.tagName, throw=False):
             raise InvalidFragmentException, \
                             '%s not found in doctype' % node.tagName
         
-        # se è specificato il tipo dell'elemento padre, controlliamo
+        # se Ã¨ specificato il tipo dell'elemento padre, controlliamo
         # che la relazione padre-figlio sia valida
         if parent is not None:
             if (parent, node.tagName) not in doctype.edges:

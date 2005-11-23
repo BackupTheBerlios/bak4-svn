@@ -1,5 +1,5 @@
 #!/usr/bin/env pythonw2.4
-# encoding: latin-1
+# encoding: utf-8
 
 # copyright (c) domenico carbotta <domenico.carbotta@gmail.com>, 2005
 # code released under the GNU General Public License

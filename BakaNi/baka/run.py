@@ -1,5 +1,5 @@
 #!/usr/bin/env python2.4
-# encoding: latin-1
+# encoding: utf-8
 
 # copyright (c) domenico carbotta <domenico.carbotta@gmail.com>, 2005
 # code released under the gnu gpl, see license.txt
@@ -96,14 +96,14 @@ def main(human_readable=False):
     print_denials(loc_denials, human_readable)
     
     print
-    print '-'*80
+    print '-' * 80
     print '[simp].   simp('
-    print '[', ','.join(map(str, xml_p)), '],'
+    print '[', ', '.join(map(str, xml_p)), '],'
     print_denials(xml_denials + loc_denials + cmp_denials, False, '')
     print ','
     print_denials(xpl_dl, False, '')
     print ', S).'
-    
+
 
 if __name__ == '__main__':
     main()

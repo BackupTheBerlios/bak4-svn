@@ -1,5 +1,5 @@
 #!/usr/bin/env python2.4
-# encoding: latin-1
+# encoding: utf-8
 
 # copyright (c) domenico carbotta <domenico.carbotta@gmail.com>, 2005
 # code released under the gnu gpl, see license.txt
@@ -17,7 +17,7 @@ class VarGenerator (object):
     TheLock = threading.Lock()
     
     @classmethod
-    def create_var(cls, var_format):
+    def create_var(cls, var_format, auto_prefix=True):
         '''
             Restituisce una nuova variabile nel formato indicato
         '''
@@ -32,13 +32,14 @@ class VarGenerator (object):
         
         cls.TheLock.release()
         
-        if var_format[0] in ['$', '?'] or var_format[0].islower():
+        if (var_format[0] in ['$', '?'] or var_format[0].islower() or
+                not auto_prefix):
             return var_format % i
         else:
-            return 'B_' + var_format % i
+            return 'Auto_' + var_format % i
     
     @classmethod
-    def factory(cls, var_format):
+    def factory(cls, var_format, auto_prefix=True):
         '''
             Restituisce una funzione che ad ogni chiamata restituisce una
             nuova variabile nel formato indicato.
@@ -46,5 +47,5 @@ class VarGenerator (object):
         if '%' not in var_format:
             var_format += '%d'
         def f():
-            return cls.create_var(var_format)        
+            return cls.create_var(var_format, auto_prefix)
         return f

@@ -1,4 +1,4 @@
-# encoding: latin-1
+# encoding: utf-8
 
 # copyright (c) domenico carbotta <domenico.carbotta@gmail.com>, 2005
 # code released under the GNU General Public License
@@ -77,24 +77,8 @@ def processor(scanner_class, parser_class, debug=False):
                 string = open(filename).read()
             else:
                 raise ValueError, 'Nothing to parse.'
-        tokens = scanner_class().tokenize(string)
         
-        if debug:
-            for t in tokens:
-                print t
-        ## effettuo il tracing di tutte le chiamate a metodo effettuate
-        ## da spark.
-        ## non è una buona idea: output caotico
-        ##
-        ## import sys
-        ## if debug:
-        ##      def trace(frame, event, arg):
-        ##              if event == 'call':
-        ##                      code = frame.f_code
-        ##                      if code.co_name.startswith('p_'):
-        ##                              print code.co_name
-        ##      sys.settrace(trace)
-        
+        tokens = scanner_class().tokenize(string)        
         rv = parser_class().parse(tokens)
         
         return rv

@@ -1,4 +1,4 @@
-# encoding: latin-1
+# encoding: utf-8
 
 xpl = '''
     //nome[text() -> $N, pos() -> $P, ../nome[text() > $N, pos() < $P]]

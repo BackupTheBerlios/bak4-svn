@@ -1,5 +1,5 @@
 #!/usr/bin/env python2.4
-# encoding: latin-1
+# encoding: utf-8
 
 # copyright (c) domenico carbotta <domenico.carbotta@gmail.com>, 2005
 # code released under the gnu gpl, see license.txt
@@ -21,8 +21,8 @@ is_doc = lambda x: isinstance(x, AuxAtom) and x.op == '!document'
 
 def normalize_comparison(atom):
     '''
-        Normalizza le comparazioni in modo da usare solo gli operatori
-        "minore di" e "uguale". Simp ringrazia.
+        Normalizza le comparazioni, restituendo una disgiunzione di predicati
+        che utilizzano gli operatori "minore di" e "uguale". Simp ringrazia.
     '''
         
     if atom.op is '>':
@@ -106,7 +106,8 @@ def expand(steps, dtcollection, var_format='Post'):
                             parent_type[0],         # doctype
                             var_format)             # var_format
                     bridge_context[step.id] = parent_type + bridge[1:]
-                    states_after.append(state.fork(bridge_steps, bridge_context))
+                    states_after.append(state.fork(bridge_steps,
+                            bridge_context))
             states = states_after
         
         elif isinstance(step, BridgeAttribStep):
@@ -130,7 +131,8 @@ def expand(steps, dtcollection, var_format='Post'):
                     bridge_context[fake_var] = parent_type + bridge[1:]
                     bridge_steps.append(AttribStep(fake_var, step.qualifier,
                             step.id))
-                    states_after.append(state.fork(bridge_steps, bridge_context))
+                    states_after.append(state.fork(bridge_steps,
+                            bridge_context))
             states = states_after
         
         elif isinstance(step, UpStep):

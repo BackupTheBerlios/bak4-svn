@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# encoding: latin-1
+# encoding: utf-8
 
 # copyright (c) domenico carbotta <domenico.carbotta@gmail.com>, 2005
 # code released under the gnu gpl, see license.txt
@@ -63,7 +63,7 @@ class XPLScanner (Scanner):
     
     def t_var(self, s):
         r' \$[a-zA-Z][a-zA-Z0-9_]* '
-        self.push('VAR', 'V_' + s[1:])
+        self.push('VAR', 'Var_' + s[1:])
     
     def t_metaconst(self, s):
         r' \?[a-zA-Z][a-zA-Z0-9_]* '
