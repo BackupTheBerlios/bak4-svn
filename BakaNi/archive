@@ -1,4 +1,0 @@
-#!/bin/sh
-
-python -m rmpyc -v baka
-zip -r baka baka
