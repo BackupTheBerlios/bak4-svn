@@ -9,6 +9,7 @@ __all__ = ['Parser', 'Scanner', 'ParsingError', 'ScanningError', 'processor']
 
 from spark import GenericParser, GenericScanner
 from mytoken import Token
+from os.path import expanduser
 
 
 class ParsingError (Exception):
@@ -19,22 +20,23 @@ class ScanningError (Exception):
     pass
 
 
-class Parser (GenericParser):
+class Parser (GenericParser, object):
     
     def __init__(self, start):
         GenericParser.__init__(self, start)
-        
+    
     def debug(self, *msg):
-        for i in msg:
-            print i,
-        print
+        for i in msg: #-#
+            print i, #-#
+        print #-#
+        pass
     
     def error(self, token):
         raise ParsingError, 'Error: unexpected token at or near "%s".' \
                 % token.value
 
 
-class Scanner (GenericScanner):
+class Scanner (GenericScanner, object):
     
     def push(self, token_type, token_value=None):
         self.rv.append(Token(token_type, token_value))
@@ -64,22 +66,26 @@ class Scanner (GenericScanner):
                         (self.lineno, s[:errlen])
 
 
-def processor(scanner_class, parser_class, debug=False):
+def processor(scanner_factory, parser_factory, debug=False):
     
-    assert issubclass(scanner_class, Scanner)
-    assert issubclass(parser_class, Parser)
-    
-    def process(string=None, filename=None, debug=debug):
-        if string is None:
-            if filename is not None:
-                from os.path import expanduser
-                filename = expanduser(filename)
-                string = open(filename).read()
-            else:
-                raise ValueError, 'Nothing to parse.'
+    def process(what, is_filename=False, debug=debug):
+        if is_filename:
+            string = open(expanduser(what)).read()
+        else:
+            string = what
         
-        tokens = scanner_class().tokenize(string)        
-        rv = parser_class().parse(tokens)
+        tokens = scanner_factory().tokenize(string)
+        
+        if debug:
+            print 'tokens = ['
+            print '\t', ',\n\t'.join(map(repr, tokens))
+            print ']'
+            print
+        
+        rv = parser_factory().parse(tokens)
+        
+        if debug:
+            print 'result =', rv
         
         return rv
     

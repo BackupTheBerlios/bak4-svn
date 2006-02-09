@@ -1,10 +1,17 @@
 # encoding: utf-8
 
 xpl = '''
-    //reparto[@nome ~= "ricerca e sviluppo",
-            dipendente[@livello->$L, @stipendio->$W, @stipendio > 10000],
-            dipendente[@livello > $L, @stipendio < $W]]
+//azienda[.//dipendente]
 '''
+# //dipendente[
+#         @livello->$L,
+#         @stipendio->$W,
+#         ../dipendente[
+#             @livello > $L,
+#             @stipendio < $W
+#         ]->$SuperiorePovero
+#     ]->$DipendenteRicco
+# '''
 
 sdd = '''
     !doctype azienda ("!default", "rossi.xml") {

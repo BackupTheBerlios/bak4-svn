@@ -8,7 +8,7 @@
 __all__ = ['XPLScanner']
 
 
-from baka.languages.toolchain import *
+from ima.languages.toolchain import *
 
 
 class XPLScanner (Scanner):
@@ -88,6 +88,10 @@ class XPLScanner (Scanner):
     def t_doubleslash(self, s):
         r' // '
         self.push('DOUBLESLASH', s)
+    
+    def t_dot(self, s):
+        r' \.(?!\.) '
+        self.push('DOT', s)
     
     def t_doubledot(self, s):
         r' \.\. '

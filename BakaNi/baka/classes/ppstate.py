@@ -5,7 +5,7 @@
 # code released under the GNU General Public License
 
 
-from baka.util.symbol import symbol
+from ima.util.symbol import symbol
 
 
 Text = symbol('Text')

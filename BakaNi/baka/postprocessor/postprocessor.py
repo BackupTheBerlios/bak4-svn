@@ -8,10 +8,10 @@
 __all__ = ['Postprocessor']
 
 
-from baka.classes.step import *
-from baka.classes.atom import *
-from baka.classes.ppstate import *
-from baka.util.vargenerator import VarGenerator
+from ima.classes.step import *
+from ima.classes.atom import *
+from ima.classes.ppstate import *
+from ima.util.vargenerator import VarGenerator
 
 
 class Postprocessor (object):
@@ -22,16 +22,16 @@ class Postprocessor (object):
     def __init__(self, dtcollection, var_factory=None, debug=True):
         self.dtcollection = dtcollection
         if var_factory is None:
-            print 'no no no'
+            print 'no no no' #-#
             self.new_var = VarGenerator.factory('Lin')
         else:
-            print 'ok'
+            print 'ok' #-#
             self.new_var = var_factory
         self.debug_enabled = debug
     
     def debug(self, msg):
         if self.debug_enabled:
-            print 'pp>\t', msg
+            print 'pp>\t', msg #-#
     
     def process(self, steps):
         st = self.remove_stars(steps)

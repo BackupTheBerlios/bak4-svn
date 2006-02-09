@@ -5,26 +5,26 @@
 # code released under the gnu gpl, see license.txt
 
 
-from baka.languages.xpathlog import *
-from baka.languages.sdd import *
-from baka.languages.locate import *
-from baka.languages.xmltranslator.xmltranslator import *
-from baka.postprocessor.expander import *
-from baka.postprocessor.dlgenerator import *
-from baka.postprocessor.hypgenerator import *
-from baka.util.vargenerator import *
-from baka.cli.options import get_options
-from baka.classes.atom import *
+from ima.languages.xpathlog import *
+from ima.languages.sdd import *
+from ima.languages.locate import *
+from ima.languages.xmltranslator.xmltranslator import *
+from ima.postprocessor.expander import *
+from ima.postprocessor.dlgenerator import *
+from ima.postprocessor.hypgenerator import *
+from ima.util.vargenerator import *
+from ima.cli.options import get_options
+from ima.classes.atom import *
 
 
 def print_denials(denials, human_readable=True, prefix='\t'):
     if not human_readable:
-        print render_denials(denials)
+        print render_denials(denials) #-#
         return
     for denial in denials:
-        print prefix, '<-',
-        print (',\n\t' + prefix).join(
-                [x.render() for x in denial])
+        print prefix, '<-', #-#
+        print (',\n\t' + prefix).join([x.render() for x in denial]) #-#
+        pass
 
 
 def render_denials(denials):
@@ -35,14 +35,14 @@ def render_denials(denials):
 
 
 def process_xpl_on_steroids(xpl_string, sdd_p):
-    xpl_p = process_xpl(string=xpl_string)
+    xpl_p = process_xpl(xpl_string)
     xpl_nf = expand(xpl_p, sdd_p)
     xpl_dl = generate_datalog(xpl_nf, sdd_p)
     return xpl_dl
 
 
 def process_loc_on_steroids(loc_string, sdd_p):
-    loc_res = process_loc(string=loc_string)
+    loc_res = process_loc(loc_string)
     loc_p = loc_res.atoms
     loc_nf = expand(loc_p, sdd_p, var_format='?pp')
     loc_datalog = generate_datalog(loc_nf, sdd_p)
@@ -55,9 +55,9 @@ def process_loc_on_steroids(loc_string, sdd_p):
 
 def main(human_readable=False):
     
-    from baka.usecases import case_zero as case
+    from ima.usecases import azienda as case
     
-    sdd_p = process_sdd(string=case.sdd)
+    sdd_p = process_sdd(case.sdd)
     
     xpl_dl = process_xpl_on_steroids(case.xpl, sdd_p)
     loc_denials, loc_res = process_loc_on_steroids(case.loc, sdd_p)
@@ -69,40 +69,42 @@ def main(human_readable=False):
     xml_denials = xml_translator.create_append_hyp(xml_p, loc_res.doctype,
             loc_res.ip_type, loc_res.ip)
     
-    cmp_denials = [
-        [AuxAtom('<', ('X', 'X'))],
-        [AuxAtom('<', ('X', 'Y')), AuxAtom('<', ('Y', 'X'))],
-        [AuxAtom('<', ('X', 'Y')), AuxAtom('<', ('Y', 'Z')),
-                AuxAtom('<', ('Z', 'X'))],
-        [AuxAtom('<', ('X', 'Y')), AuxAtom('<', ('Y', 'Z')),
-                AuxAtom('=', ('Z', 'X'))]
-        ]
+    ## cmp_denials = [
+    ##     [AuxAtom('<', ('X', 'X'))],
+    ##     [AuxAtom('<', ('X', 'Y')), AuxAtom('<', ('Y', 'X'))],
+    ##     [AuxAtom('<', ('X', 'Y')), AuxAtom('<', ('Y', 'Z')),
+    ##             AuxAtom('<', ('Z', 'X'))],
+    ##     [AuxAtom('<', ('X', 'Y')), AuxAtom('<', ('Y', 'Z')),
+    ##             AuxAtom('=', ('Z', 'X'))]
+    ## ]
     
-    print
-    print '-' * 60
-    print 'vincoli:'
-    print_denials(xpl_dl, human_readable)
+    print #-#
+    print '-' * 60 #-#
+    print 'vincoli:' #-#
+    print_denials(xpl_dl, human_readable) #-#
     
-    print
-    print 'descrizione del frammento xml:'
-    print '[', ','.join(map(str, xml_p)), ']'
+    print #-#
+    print 'descrizione del frammento xml:' #-#
+    print '[', ','.join(map(str, xml_p)), ']' #-#
     
-    print
-    print 'ipotesi aggiuntive dell\'operazione di append:'
-    print_denials(xml_denials, human_readable)
+    print #-#
+    print 'ipotesi aggiuntive dell\'operazione di append:' #-#
+    print_denials(xml_denials, human_readable) #-#
     
-    print
-    print 'ipotesi aggiuntive dalla localizzazione dell\'append:'
-    print_denials(loc_denials, human_readable)
+    print #-#
+    print 'ipotesi aggiuntive dalla localizzazione dell\'append:' #-#
+    print_denials(loc_denials, human_readable) #-#
     
     print
     print '-' * 80
-    print '[simp].   simp('
+    print "['simp.pl']."
+    print 'simp('
     print '[', ', '.join(map(str, xml_p)), '],'
-    print_denials(xml_denials + loc_denials + cmp_denials, False, '')
-    print ','
+    print_denials(xml_denials, False, '')
     print_denials(xpl_dl, False, '')
-    print ', S).'
+    print ', I), optimize('
+    print_denials(loc_denials, False, '')
+    print ', I, Result).'
 
 
 if __name__ == '__main__':

@@ -10,16 +10,16 @@ __all__ = ['process_dlg', 'dltest']
 
 from dlgparser import DatalogParser
 from dlgscanner import DatalogScanner
-from baka.languages.toolchain import processor
+from ima.languages.toolchain import processor
 
 
 process_dlg = processor(DatalogScanner, DatalogParser)
 
 
 def dltest():    
-    from baka.languages.sdd import process_sdd
+    from ima.languages.sdd import process_sdd
     
-    from baka.usecases.azienda import sdd
+    from ima.usecases.simple import sdd
     
     test_datalog = '''[[
     'dipendente@azienda'('Auto_Step1', 'Auto_X68', 'Auto_Step0', 'Auto_X69',
@@ -36,12 +36,19 @@ def dltest():
     '<'('Var_L', 'Auto_Step3'),
     '<'('10000', 'Auto_Step5'),
     '~='('Auto_Step6', 's_ricerca e sviluppo')
-    ]]'''    
-    DatalogParser.dtcollection = process_sdd(string=sdd)
-    rv = process_dlg(string=test_datalog, debug=True)
-    print '---'
+    ]]'''
+    test_datalog = '''[
+    ['nomi@nomi'('Auto_Post0', 'Auto_X17', 'x_doc0'), 'nome@nomi'('Auto_Step0',
+    'Var_P', 'Auto_Post0', 'Var_N'), 'nome@nomi'('Auto_Step1', 'Auto_Step2',
+    'Auto_Step4', 'Auto_Step3'), '!document'('x_doc0', 'x_!default'),
+    '='('Auto_Post0', 'Auto_Step4'), '<'('Auto_Step2', 'Var_P'), '<'('Var_N',
+    'Auto_Step3')]
+    ]'''
+    DatalogParser.dtcollection = process_sdd(sdd)
+    rv = process_dlg(test_datalog, debug=True)
+    print '---' #-#
     return rv
 
 
 if __name__ == '__main__':
-    print dltest()
+    print dltest() #-#

@@ -8,7 +8,7 @@
 __all__ = ['SDDScanner']
 
 
-from baka.languages.toolchain import *
+from ima.languages.toolchain import *
 
 
 class SDDScanner (Scanner):

@@ -8,7 +8,7 @@
 __all__ = ['Atom', 'AuxAtom']
 
 
-from baka.util.vargenerator import *
+from ima.util.vargenerator import *
 
 
 def quote(container):

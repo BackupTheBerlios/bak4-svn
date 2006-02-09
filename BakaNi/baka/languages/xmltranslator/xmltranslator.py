@@ -9,10 +9,10 @@ __all__ = ['XMLTranslator']
 
 
 from xml.dom import minidom
-from baka.classes.doctype import *
-from baka.classes.atom import *
-from baka.languages.xmltranslator.smallerthandom import *
-from baka.util.vargenerator import *
+from ima.classes.doctype import *
+from ima.classes.atom import *
+from ima.languages.xmltranslator.smallerthandom import *
+from ima.util.vargenerator import *
 
 
 class XMLTranslator (object):
@@ -49,8 +49,7 @@ class XMLTranslator (object):
             rv.extend(self.create_atoms_from_tree(child, doctype, id))
         return rv
     
-    def create_append_hyp(self, atoms, doctype, parent_type, parent_id,
-                    human_readable=False):
+    def create_append_hyp(self, atoms, doctype, parent_type, parent_id):
         doctype = self.dtcollection.get(doctype)
         no_such_atom = []
         no_successive_atoms = []

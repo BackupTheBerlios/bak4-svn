@@ -8,9 +8,8 @@
 __all__ = ['datalog_to_xquery']
 
 
-from baka.util.vargenerator import *
-from baka.classes.atom import *
-from baka.classes.equivalence_classes import *
+from ima.util.vargenerator import *
+from ima.classes.atom import *
 
 
 class Clause (object):
@@ -40,8 +39,7 @@ def classify_atoms(atoms):
     is_doc_atom = lambda x: isinstance(x, AuxAtom) and x.op == '!document'
     is_cmp_atom = lambda x: isinstance(x, AuxAtom) and x.op != '!document'
     is_cls_atom = lambda x: isinstance(x, Atom)
-    filter_atoms = lambda f: [x for x in atoms if f(x)]
-    return map(filter_atoms, [is_doc_atom, is_cmp_atom, is_cls_atom])
+    return [filter(f, atoms) for f in (is_doc_atom, is_cmp_atom, is_cls_atom)]
 
 
 def make_clauses(atoms):
@@ -49,12 +47,23 @@ def make_clauses(atoms):
     attr_clauses = []
     pos_clauses = []
     
+    already_used = []
     equivalences = []
+    unique_var = VarGenerator.factory('Uniq')
     
+    def make_unique(var):
+        if var in already_used:
+            nv = unique_var()
+            equivalences.append(AuxAtom('=', (nv, var)))
+            return nv
+        else:
+            already_used.append(var)
+            return var
+        
     for atom in atoms:
         assert isinstance(atom, Atom)
         
-        element_id = atom.parameters['$id']
+        element_id = make_unique(atom.parameters['$id'])
         el_clauses.append(
                 Clause(atom.parameters['$parent'], '/' + atom.element,
                         element_id))
@@ -65,15 +74,15 @@ def make_clauses(atoms):
                 continue
             elif pname == '$pos':
                 pos_clauses.append(
-                        Clause(element_id, '/pos()', pvalue))
+                        Clause(element_id, '/pos()', make_unique(pvalue)))
             elif pname == '$text':
-                opt_clauses.append(
-                        Clause(element_id, '/text()', pvalue))
+                attr_clauses.append(
+                        Clause(element_id, '/text()', make_unique(pvalue)))
             else:
                 attr_clauses.append(
-                        Clause(element_id, '/@' + pname, pvalue))
+                        Clause(element_id, '/@' + pname, make_unique(pvalue)))
     
-    return map(sort_clauses, (el_clauses, attr_clauses, pos_clauses))
+    return (el_clauses, attr_clauses + pos_clauses, equivalences)
 
 
 def sort_clauses(clauses):
@@ -104,39 +113,39 @@ def simplify(opt_clauses, comparisons):
     return candidates.values()
 
 
-def standardize_apart(atoms):
-    
-    synonyms = {}
-    new_std_var = VarGenerator.factory('Std_', auto_prefix=False)
-    
-    for atom in atoms:
-        atom = atom.copy
-        if not isinstance(atom, Atom):
-            continue
-        
-        for param, value in atom.parameters.iteritems:
-            nv = new_std_var()
-            atom.parameters[param] = nv
-            if value in vars:
-                synonyms[value].append(nv)
-            else:
-                synonyms[value] = [nv]
-    
-    return atoms, synonyms
-
-
 def datalog_to_xquery(atoms):
-        
-    documents, comparisons, clause_atoms = classify_atoms(atoms)
-    clause_atoms, synonyms = standardize_apart(clause_atoms)
-    el_clauses, attr_clauses, pos_clauses = make_clauses(clause_atoms)
     
-    # TODO -- sono qui
+    documents, comparisons, clause_atoms = classify_atoms(atoms)
+    comp_clauses, opt_clauses, equivalences = make_clauses(clause_atoms)
+    
+    comparisons += equivalences
+    
+    for c in comp_clauses + opt_clauses:
+        print c #-#
+    
+    print '===' #-#
+    
+    used_ids = []
+    for cmp in comparisons:
+        used_ids.extend(cmp.parameters)
+    
+    opt_clauses = [x for x in opt_clauses if x.id in used_ids]
+    
+    clauses = comp_clauses + opt_clauses
+    print 'some' #-#
+    print ',\n'.join('\t' + str(x) for x in clauses) #-#
+    print 'satisfies' #-#
+    print ' and\n'.join('\t$%s %s $%s' % #-#
+            (c.parameters[0], c.op, c.parameters[1]) for c in comparisons)
+
 
 
 if __name__ == '__main__':
     
-    from baka.languages.datalog import dltest
+    from ima.languages.datalog import dltest
     
     for results in dltest():
         datalog_to_xquery(results)
+
+
+    

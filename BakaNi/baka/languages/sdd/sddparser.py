@@ -8,9 +8,9 @@
 __all__ = ['SDDParser']
 
 
-from baka.languages.toolchain import *
-from baka.classes.doctype import *
-from baka.classes.resolver import Resolver
+from ima.languages.toolchain import *
+from ima.classes.doctype import *
+from ima.classes.resolver import Resolver
 
 
 class SDDParser (Parser):
@@ -58,8 +58,15 @@ class SDDParser (Parser):
             
             self.documents[fn] = id
         
+        print '----'
+        print 'id = ', id
+        print 'sdd_el = ', self.sdd_elements
+        print 'root_el = ', self.root_el
+        print 'edges = ', self.sdd_edges
+        print 'pcdata = ', self.sdd_pcdata_elements
+        
         self.doctypes[id] = DocType(id, self.sdd_elements, self.root_el,
-                        self.sdd_edges, self.sdd_pcdata_elements)
+                self.sdd_edges, self.sdd_pcdata_elements)
         
         self.root_el = None
         self.sdd_elements = {}
@@ -189,4 +196,4 @@ if __name__ == '__main__':
     '''
     
     from sddscanner import SDDScanner
-    processor(SDDScanner, SDDParser)(string=sdp, debug=True)
+    processor(SDDScanner, SDDParser)(sdp, debug=True)

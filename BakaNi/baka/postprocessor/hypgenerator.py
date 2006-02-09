@@ -8,8 +8,8 @@
 __all__ = ['generate_hypotheses']
 
 
-from baka.classes.atom import *
-from baka.util.vargenerator import *
+from ima.classes.atom import *
+from ima.util.vargenerator import *
 
 
 def core(atom):
@@ -74,7 +74,7 @@ def generate_hypotheses(atoms, var_format='Hyp'):
         hyp.append(atom)
         hypotheses.append(hyp)
     
-    for denial in hypotheses:
-        print '<-', ', '.join(map(str, denial))
+    for denial in hypotheses: #-#
+        print '<-', ', '.join(map(str, denial)) #-#
     
     return hypotheses

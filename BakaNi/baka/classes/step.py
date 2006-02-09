@@ -5,9 +5,9 @@
 # code released under the gnu gpl, see license.txt
 
 
-from baka.util.symbol import *
-from baka.classes.atom import AuxAtom
-from baka.util.vargenerator import *
+from ima.util.symbol import *
+from ima.classes.atom import AuxAtom
+from ima.util.vargenerator import *
 
 
 FragmentRoot = symbol('FragmentRoot')
@@ -29,7 +29,7 @@ class Step (object):
         self.doctype = doctype
     
     def render(self):
-        raise NotImplementedException
+        raise NotImplementedError()
     
     def __str__(self):
         rv = self.render()

@@ -8,7 +8,7 @@
 __all__ = ['DatalogScanner']
 
 
-from baka.languages.toolchain import *
+from ima.languages.toolchain import *
 
 
 class DatalogScanner (Scanner):

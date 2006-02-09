@@ -8,9 +8,9 @@
 __all__ = ['RecursiveSchemaException', 'Resolver', 'StepExpansionError']
 
 
-from baka.util.vargenerator import VarGenerator
-from baka.classes.step import *
-from baka.classes.ppstate import *
+from ima.util.vargenerator import VarGenerator
+from ima.classes.step import *
+from ima.classes.ppstate import *
 
 
 class RecursiveSchemaException (Exception):

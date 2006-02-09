@@ -8,10 +8,10 @@
 __all__ = ['MappingError', 'DocType', 'DTCollection', 'DefaultDocument']
 
 
-from baka.classes.resolver import *
-from baka.classes.atom import *
-from baka.classes.ppstate import Document
-from baka.util.symbol import *
+from ima.classes.resolver import *
+from ima.classes.atom import *
+from ima.classes.ppstate import Document
+from ima.util.symbol import *
 
 
 DefaultDocument = '!default'
@@ -87,6 +87,13 @@ class DocType (object):
         '''
         self.check_element(element)
         return Atom(self, element, parameters)
+    
+    def __repr__(self):
+        rv = 'DocType(id=' + repr(self.id) + ',\n\t'
+        rv += 'elements=' + repr(self.elements) + ',\n\t'
+        rv += 'root_el=' + repr(self.root_el) + ',\n\t'
+        rv += 'edges=' + repr(self.edges) + ')'
+        return rv
 
 
 class DTCollection (object):
@@ -95,7 +102,12 @@ class DTCollection (object):
         self.documents = documents
         self.doctypes = doctypes
     
-    # deprecated!
+    def __repr__(self):
+        rv = 'DTCollection(' + repr(self.documents) + ',\n'
+        rv += repr(self.doctypes) + '\n)'
+        return rv
+    
+    # deprecated! use get_by_document() instead.
     def get(self, doc_name):
         return self.get_by_document(doc_name)
     

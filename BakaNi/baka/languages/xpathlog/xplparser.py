@@ -8,12 +8,12 @@
 __all__ = ['XPLParser']
 
 
-from baka.languages.toolchain import *
-from baka.languages.xpathlog.xplscanner import *
-from baka.util.vargenerator import *
-from baka.classes.atom import AuxAtom
-from baka.classes.step import *
-from baka.classes.doctype import DefaultDocument
+from ima.languages.toolchain import *
+from ima.languages.xpathlog.xplscanner import *
+from ima.util.vargenerator import *
+from ima.classes.atom import AuxAtom
+from ima.classes.step import *
+from ima.classes.doctype import DefaultDocument
 
 
 def join_steps(step, step_list):
@@ -143,6 +143,14 @@ class XPLParser (Parser):
             args[0][0].start = FilterRoot
         self.debug(args[0])
         return args[0]
+    
+    def p_rel_path_3(self, args):
+        '''
+                rel_path ::= DOT path_c
+        '''
+        args[1][0].start = FilterRoot
+        self.debug(args[0])
+        return args[1]
     
     def p_path_c_1(self, args):
         '''
@@ -282,13 +290,13 @@ if __name__ == '__main__':
     
     proc = processor(XPLScanner, XPLParser)
     def do_it():
-        proc(string='''//dipendente[@nome->$N, pos()->$P,
+        proc('''//dipendente[@nome->$N, pos()->$P,
                         ../*[@nome > $N, pos() < $P]->$Z],
                         $Z/@grado ~= "dirigente",
                         !document("pippo.xml")/ciao->$H > 3''', debug=True)
     
     ## t = Timer('do_it()', 'from __main__ import do_it')
     ## rv = t.repeat(200, 1)
-    ## print sum(rv) / len(rv)
+    #print sum(rv) / len(rv) #-#
     
     do_it()

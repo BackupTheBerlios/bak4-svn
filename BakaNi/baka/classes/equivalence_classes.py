@@ -8,7 +8,7 @@
 __all__ = ['EquivalenceClasses', 'ConstraintError']
 
 
-from baka.classes.atom import AuxAtom
+from ima.classes.atom import AuxAtom
 
 
 class ConstraintError (Exception):

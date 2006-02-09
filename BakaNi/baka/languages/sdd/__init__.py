@@ -10,7 +10,7 @@ __all__ = ['process_sdd']
 
 from sddparser import SDDParser
 from sddscanner import SDDScanner
-from baka.languages.toolchain import processor
+from ima.languages.toolchain import processor
 
 
 process_sdd = processor(SDDScanner, SDDParser)

@@ -8,9 +8,9 @@
 __all__ = ['DatalogGenerator', 'generate_datalog']
 
 
-from baka.classes.step import *
-from baka.classes.atom import *
-from baka.util.vargenerator import VarGenerator
+from ima.classes.step import *
+from ima.classes.atom import *
+from ima.util.vargenerator import VarGenerator
 
 
 class DatalogGenerator (object):
@@ -24,11 +24,11 @@ class DatalogGenerator (object):
     
     def generate(self, steps, context):
         rv = []
-        print '<><><>'
-        print context
+        print '<><><>' #-#
+        print context #-#
         
         for step in steps:
-            print 'generating', step
+            print 'generating', step #-#
             if isinstance(step, AuxAtom):
                 rv.append(step)
                 continue
@@ -39,7 +39,7 @@ class DatalogGenerator (object):
             elif isinstance(step, AttribStep):
                 a = doctype.create_atom(context[step.start][-1],
                                 {'$id': step.start, step.qualifier: step.id})
-            print '\t generated', a
+            print '\t generated', a #-#
             rv.append(a)
         return rv
     

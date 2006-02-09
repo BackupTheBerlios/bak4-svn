@@ -8,12 +8,12 @@
 __all__ = ['expand']
 
 
-from baka.classes.atom import *
-from baka.classes.step import *
-from baka.util.vargenerator import *
-from baka.languages.sdd import *
-from baka.classes.ppstate import *
-from baka.languages.xpathlog import *
+from ima.classes.atom import *
+from ima.classes.step import *
+from ima.util.vargenerator import *
+from ima.languages.sdd import *
+from ima.classes.ppstate import *
+from ima.languages.xpathlog import *
 
 
 is_doc = lambda x: isinstance(x, AuxAtom) and x.op == '!document'
@@ -25,12 +25,12 @@ def normalize_comparison(atom):
         che utilizzano gli operatori "minore di" e "uguale". Simp ringrazia.
     '''
         
-    if atom.op is '>':
+    if atom.op == '>':
         return [AuxAtom('<', reversed(atom.parameters))]
-    elif atom.op is '<=':
+    elif atom.op == '<=':
         return [AuxAtom('<', atom.parameters),
                 AuxAtom('=', atom.parameters)]
-    elif atom.op is '>=':
+    elif atom.op == '>=':
         return [AuxAtom('<', reversed(atom.parameters)),
                 AuxAtom('=', atom.parameters)]
     else:
@@ -38,19 +38,18 @@ def normalize_comparison(atom):
 
 
 def debug(*msg):
-    for i in msg:
-        print i,
-    print
+    pass
+
 
 def expand(steps, dtcollection, var_format='Post'):
     
-    print steps
+    print steps #-#
     var_factory = VarGenerator.factory(var_format)
     
     states = [PPState()]
     for step in steps:
         
-        print step
+        print step #-#
         
         if is_doc(step):
             for state in states:
@@ -138,7 +137,7 @@ def expand(steps, dtcollection, var_format='Post'):
         elif isinstance(step, UpStep):
             states_after = []
             for state in states:
-                print step
+                print step #-#
                 parent_type = state.context[step.start]
                 if parent_type[:-2] is Document:
                     debug(state, 'killed at step', step)
@@ -156,8 +155,8 @@ def expand(steps, dtcollection, var_format='Post'):
                     states_after.append(state.fork(res, step_context))
             states = states_after
         
-        for state in states:
-            print state
-        print '---'
+        for state in states: #-#
+            print state #-#
+        print '---' #-#
     
     return states

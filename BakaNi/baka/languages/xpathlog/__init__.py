@@ -10,7 +10,7 @@ __all__ = ['process_xpl']
 
 from xplparser import XPLParser
 from xplscanner import XPLScanner
-from baka.languages.toolchain import processor
+from ima.languages.toolchain import processor
 
 
 process_xpl = processor(XPLScanner, XPLParser)

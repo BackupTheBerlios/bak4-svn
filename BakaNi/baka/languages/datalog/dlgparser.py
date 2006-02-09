@@ -8,10 +8,20 @@
 __all__ = ['DatalogParser']
 
 
-from baka.languages.toolchain import *
-from baka.util.vargenerator import *
-from baka.classes.atom import *
-from baka.classes.equivalence_classes import *
+from ima.languages.toolchain import *
+from ima.util.vargenerator import *
+from ima.classes.atom import *
+from ima.classes.equivalence_classes import *
+
+
+def is_number(x):
+    # str.isdigit() doesn't work for floating point numbers...
+    try:
+        float(x)
+        return True
+    except ValueError:
+        return False
+
 
 class DatalogParser (Parser):
     
@@ -22,13 +32,12 @@ class DatalogParser (Parser):
         self.new_std_var = VarGenerator.factory('Std_%d', auto_prefix=False)
         
     def standardize(self, string):
-        if string.startswith('s_'):
+        if string.startswith('s_') or is_number(x):
             nv = self.new_lit_var()
             self.equivalences.append(AuxAtom('=', (nv, string)))
             return nv
         elif (string.startswith('Auto_') or string.startswith('Var_') or
-                string.startswith('?') or string.startswith('x_') or
-                string.isdigit()):
+                string.startswith('?') or string.startswith('x_')):
             nv = self.new_std_var()
             self.equivalences.append(AuxAtom('=', (nv, string)))
             return nv
@@ -47,7 +56,7 @@ class DatalogParser (Parser):
             denial_list ::= OPENBRACKET predicates CLOSEBRACKET
                     COMMA denial_list
         '''
-        print args[1]
+        print args[1] #-#
         rv = args[1] + self.equivalences
         self.equivalences = []
         return rv + args[4]
@@ -97,7 +106,7 @@ class DatalogParser (Parser):
         pred_name = args[0].value
         if '@' not in pred_name:
             rv = AuxAtom(pred_name, args[2])
-            print rv
+            print rv #-#
             return rv
         else:
             pred_name, dtid = pred_name.split('@')
@@ -106,9 +115,9 @@ class DatalogParser (Parser):
             # build arguments dictionary by combining element attributes
             # and predicate arguments.
             parameters = dict(zip(doctype.elements[pred_name], args[2]))
-            print parameters
+            print parameters #-#
             rv = Atom(doctype, pred_name, parameters)
-            print rv
+            print rv #-#
             return rv
     
     def p_stringlist(self, args):

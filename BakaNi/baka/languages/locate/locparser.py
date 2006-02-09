@@ -8,10 +8,10 @@
 __all__ = ['LocParser']
 
 
-from baka.languages.toolchain import *
-from baka.classes.atom import *
-from baka.classes.step import *
-from baka.util.vargenerator import VarGenerator
+from ima.languages.toolchain import *
+from ima.classes.atom import *
+from ima.classes.step import *
+from ima.util.vargenerator import VarGenerator
 
 
 def join_steps(step, step_list):
@@ -160,7 +160,7 @@ class LocParser (Parser):
 
 
 if __name__ == '__main__':
-    from baka.languages.xpathlog.scanner import XPLScanner
+    from ima.languages.xpathlog.scanner import XPLScanner
     
     p = processor(XPLScanner, LocParser)('!document("prova.xml")//pippo',
                     debug=True)

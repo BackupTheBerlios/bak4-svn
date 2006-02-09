@@ -9,8 +9,8 @@ __all__ = ['process_loc']
 
 
 from locparser import LocParser
-from baka.languages.xpathlog.xplscanner import XPLScanner
-from baka.languages.toolchain import processor
+from ima.languages.xpathlog.xplscanner import XPLScanner
+from ima.languages.toolchain import processor
 
 
 process_loc = processor(XPLScanner, LocParser)
